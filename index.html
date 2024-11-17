@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gastos Mensais</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f9;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .chart-section {
+            width: 80%;
+            background: #fff;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .chart-container {
+            position: relative;
+            height: 350px;
+        }
+        .info-box {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .info-box div {
+            margin-bottom: 10px;
+        }
+        .info-box span {
+            font-weight: bold;
+            color: #007BFF;
+        }
+        select {
+            margin: 10px 0;
+            padding: 8px 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .tables-section {
+            display: flex;
+            gap: 20px;
+            width: 80%;
+        }
+        .table-container {
+            width: 50%;
+            background: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            text-align: left;
+            padding: 10px;
+            border: 1px solid #ccc;
+        }
+        th {
+            background-color: #007BFF;
+            color: white;
+        }
+        button {
+            padding: 8px 15px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        /* Estilo para o formulário de adição de gasto */
+        .form-container {
+            margin-top: 20px;
+            display: none;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 300px;
+            z-index: 100;
+        }
+        .form-container input, .form-container select {
+            margin: 5px;
+            padding: 8px;
+            width: 100%;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .form-container button {
+            background-color: #28a745;
+        }
+    </style>
+</head>
+<body>
+    <h1>Gastos Mensais</h1>
+    <div class="container">
+        <div class="chart-section">
+            <h2>Gráfico de Gastos</h2>
+            <select id="mesSelect" onchange="atualizarTabelaPorMes()">
+                <option value="Janeiro">Janeiro</option>
+                <option value="Fevereiro">Fevereiro</option>
+                <option value="Março">Março</option>
+                <option value="Abril">Abril</option>
+                <option value="Maio">Maio</option>
+                <option value="Junho">Junho</option>
+                <option value="Julho">Julho</option>
+                <option value="Agosto">Agosto</option>
+                <option value="Setembro">Setembro</option>
+                <option value="Outubro">Outubro</option>
+                <option value="Novembro">Novembro</option>
+                <option value="Dezembro">Dezembro</option>
+            </select>
+            <div class="chart-container">
+                <canvas id="gastosChart"></canvas>
+            </div>
+            <div class="info-box">
+                <div>Total de Gastos Pessoais: R$ <span id="totalPessoais">0.00</span></div>
+                <div>Total de Gastos Obrigatórios: R$ <span id="totalObrigatorios">0.00</span></div>
+                <div id="comparison"></div>
+            </div>
+        </div>
+        <div class="tables-section">
+            <div class="table-container">
+                <h2>Gastos Pessoais</h2>
+                <table id="gastosPessoaisTable">
+                    <thead>
+                        <tr>
+                            <th>Categoria</th>
+                            <th>Descrição</th>
+                            <th>Valor (R$)</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+                <button onclick="mostrarFormulario('pessoal')">Adicionar Gasto Pessoal</button>
+            </div>
+            <div class="table-container">
+                <h2>Gastos Obrigatórios</h2>
+                <table id="gastosObrigatoriosTable">
+                    <thead>
+                        <tr>
+                            <th>Categoria</th>
+                            <th>Descrição</th>
+                            <th>Valor (R$)</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+                <button onclick="mostrarFormulario('obrigatorio')">Adicionar Gasto Obrigatório</button>
+            </div>
+        </div>
+        
+        <!-- Formulário de Adição de Gasto -->
+        <div class="form-container" id="formContainer">
+            <h3>Adicionar Gasto</h3>
+            <label for="categoria">Categoria:</label>
+            <input type="text" id="categoria" required>
+            <label for="descricao">Descrição:</label>
+            <input type="text" id="descricao" required>
+            <label for="valor">Valor (R$):</label>
+            <input type="number" id="valor" required min="0" step="0.01">
+            <label for="tipoGasto">Tipo de Gasto:</label>
+            <select id="tipoGasto">
+                <option value="pessoal">Pessoal</option>
+                <option value="obrigatorio">Obrigatório</option>
+            </select>
+            <button type="button" onclick="adicionarGasto()">Adicionar</button>
+            <button type="button" onclick="fecharFormulario()">Cancelar</button>
+        </div>
+    </div>
+
+    <script>
+        // Dados armazenados no Local Storage
+        const dadosPorMes = JSON.parse(localStorage.getItem('dadosPorMes')) || {
+            Janeiro: { pessoais: [], obrigatorios: [] },
+            Fevereiro: { pessoais: [], obrigatorios: [] },
+            Março: { pessoais: [], obrigatorios: [] },
+            // Outros meses
+        };
+
+        // Inicializando o gráfico
+        const chart = new Chart(document.getElementById('gastosChart').getContext('2d'), {
+            type: 'bar',
+            data: {
+                labels: ['Pessoais', 'Obrigatórios'],
+                datasets: [{
+                    label: 'Gastos Mensais (R$)',
+                    data: [0, 0],
+                    backgroundColor: ['#FF6384', '#36A2EB']
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: context => `R$ ${context.raw.toFixed(2)}`
+                        }
+                    }
+                }
+            }
+        });
+
+        // Função para atualizar as tabelas e gráfico com os dados do mês atual
+        function atualizarTabelaPorMes() {
+            const mes = document.getElementById('mesSelect').value;
+            const dados = dadosPorMes[mes];
+            preencherTabela('gastosPessoaisTable', dados.pessoais);
+            preencherTabela('gastosObrigatoriosTable', dados.obrigatorios);
+            atualizarTotaisEComparativos(mes);
+        }
+
+        // Função para preencher a tabela com os dados de gastos
+        function preencherTabela(tabelaId, dados) {
+            const tbody = document.getElementById(tabelaId).querySelector('tbody');
+            tbody.innerHTML = '';
+            dados.forEach((item, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${item.categoria}</td>
+                    <td>${item.descricao}</td>
+                    <td>${item.valor.toFixed(2)}</td>
+                    <td><button onclick="removerLinha('${tabelaId}', ${index})">Remover</button></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Função para atualizar os totais e comparativos no gráfico e na tela
+        function atualizarTotaisEComparativos(mesAtual) {
+            const dadosAtual = dadosPorMes[mesAtual];
+            const totalPessoais = dadosAtual.pessoais.reduce((acc, item) => acc + item.valor, 0);
+            const totalObrigatorios = dadosAtual.obrigatorios.reduce((acc, item) => acc + item.valor, 0);
+
+            document.getElementById('totalPessoais').innerText = totalPessoais.toFixed(2);
+            document.getElementById('totalObrigatorios').innerText = totalObrigatorios.toFixed(2);
+
+            chart.data.datasets[0].data = [totalPessoais, totalObrigatorios];
+            chart.update();
+        }
+
+        // Função para mostrar o formulário de adição de gasto
+        function mostrarFormulario(tipo) {
+            const formContainer = document.getElementById('formContainer');
+            formContainer.style.display = 'block';
+            document.getElementById('tipoGasto').value = tipo;
+        }
+
+        // Função para fechar o formulário
+        function fecharFormulario() {
+            document.getElementById('formContainer').style.display = 'none';
+        }
+
+        // Função para adicionar um gasto
+        function adicionarGasto() {
+            const categoria = document.getElementById('categoria').value;
+            const descricao = document.getElementById('descricao').value;
+            const valor = parseFloat(document.getElementById('valor').value);
+            const tipoGasto = document.getElementById('tipoGasto').value;
+
+            if (categoria && descricao && !isNaN(valor) && valor > 0) {
+                const mesAtual = document.getElementById('mesSelect').value;
+                const dados = dadosPorMes[mesAtual];
+
+                if (tipoGasto === 'pessoal') {
+                    dados.pessoais.push({ categoria, descricao, valor });
+                } else {
+                    dados.obrigatorios.push({ categoria, descricao, valor });
+                }
+
+                // Salvar dados no localStorage
+                localStorage.setItem('dadosPorMes', JSON.stringify(dadosPorMes));
+
+                // Fechar o formulário e atualizar as tabelas
+                fecharFormulario();
+                atualizarTabelaPorMes();
+            } else {
+                alert('Por favor, preencha todos os campos corretamente.');
+            }
+        }
+
+        // Função para remover um gasto
+        function removerLinha(tabelaId, index) {
+            const mesAtual = document.getElementById('mesSelect').value;
+            const dados = dadosPorMes[mesAtual];
+
+            if (tabelaId === 'gastosPessoaisTable') {
+                dados.pessoais.splice(index, 1);
+            } else {
+                dados.obrigatorios.splice(index, 1);
+            }
+
+            // Atualizar localStorage e a tabela
+            localStorage.setItem('dadosPorMes', JSON.stringify(dadosPorMes));
+            atualizarTabelaPorMes();
+        }
+
+        // Inicializa a página com os dados do mês atual
+        atualizarTabelaPorMes();
+    </script>
+</body>
+</html>
