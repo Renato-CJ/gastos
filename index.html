@@ -112,18 +112,19 @@
             const admin = adminUsers.find(user => user.username === username && user.password === password);
             const user = users.find(user => user.username === username && user.password === password);
 
-            if (admin || user) {
+            if (admin) {
                 onlineUsers[username] = true;
                 updateUserStatus();
                 document.getElementById('loginForm').classList.add('d-none');
-                if (admin) {
-                    document.getElementById('adminMenu').classList.remove('d-none');
-                    alert('Bem-vindo, administrador!');
-                } else {
-                    document.getElementById('userView').classList.remove('d-none');
-                    updateMessagesList(username);
-                    alert('Bem-vindo, colaborador!');
-                }
+                document.getElementById('adminMenu').classList.remove('d-none');
+                alert('Bem-vindo, administrador!');
+            } else if (user) {
+                onlineUsers[username] = true;
+                updateUserStatus();
+                document.getElementById('loginForm').classList.add('d-none');
+                document.getElementById('userView').classList.remove('d-none');
+                updateMessagesList(username);
+                alert('Bem-vindo, colaborador!');
             } else {
                 alert('Usuário ou senha inválidos!');
             }
