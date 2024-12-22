@@ -17,6 +17,10 @@
                 <label for="loginUsername" class="form-label">Nome de Usuário</label>
                 <input type="text" id="loginUsername" class="form-control" required>
             </div>
+            <div class="mb-3">
+                <label for="loginPassword" class="form-label">Senha</label>
+                <input type="password" id="loginPassword" class="form-control" required>
+            </div>
             <button type="submit" class="btn btn-primary">Entrar</button>
         </form>
 
@@ -103,9 +107,10 @@
             e.preventDefault();
 
             const username = document.getElementById('loginUsername').value;
+            const password = document.getElementById('loginPassword').value;
 
-            const admin = adminUsers.find(user => user.username === username);
-            const user = users.find(user => user.username === username);
+            const admin = adminUsers.find(user => user.username === username && user.password === password);
+            const user = users.find(user => user.username === username && user.password === password);
 
             if (admin || user) {
                 onlineUsers[username] = true;
@@ -120,7 +125,7 @@
                     alert('Bem-vindo, colaborador!');
                 }
             } else {
-                alert('Usuário não registrado!');
+                alert('Usuário ou senha inválidos!');
             }
         });
 
