@@ -108,7 +108,7 @@
         let adminUsers = [{ username: 'admin1', password: 'admin123' }];
         let users = loadStorage('users');
         let messages = loadStorage('messages');
-        let onlineUsers = loadStorage('onlineUsers');
+        let onlineUsers = loadStorage('onlineUsers') || {};
 
         // Sincronizar dados com localStorage
         function syncUsers() {
@@ -128,7 +128,12 @@
                 saveStorage('onlineUsers', onlineUsers);
                 updateUserStatus();
                 document.getElementById('loginForm').classList.add('d-none');
-                admin ? document.getElementById('adminMenu').classList.remove('d-none') : document.getElementById('userView').classList.remove('d-none');
+                if (admin) {
+                    document.getElementById('adminMenu').classList.remove('d-none');
+                } else {
+                    document.getElementById('userView').classList.remove('d-none');
+                    updateMessagesList(username);
+                }
             } else {
                 const feedback = document.getElementById('loginFeedback');
                 feedback.textContent = 'Usuário ou senha inválidos!';
