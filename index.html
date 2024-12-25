@@ -110,8 +110,14 @@
         let messages = loadStorage('messages');
         let onlineUsers = loadStorage('onlineUsers');
 
+        // Sincronizar dados com localStorage
+        function syncUsers() {
+            users = loadStorage('users');
+        }
+
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
+            syncUsers(); // Certificar que os dados estão atualizados
             const username = document.getElementById('loginUsername').value;
             const password = document.getElementById('loginPassword').value;
             const admin = adminUsers.find(user => user.username === username && user.password === password);
