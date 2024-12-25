@@ -21,6 +21,17 @@ button {
     margin: 10px;
 }
 
+#userMenu {
+    display: block;
+    text-align: center;
+}
+
+#userMenu button {
+    font-size: 18px;
+    padding: 10px;
+    margin: 10px;
+}
+
 h3 {
     margin-bottom: 20px;
 }

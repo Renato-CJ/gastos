@@ -20,9 +20,10 @@ document.getElementById('loginForm').addEventListener('submit', function (e) {
         document.getElementById('loginForm').classList.add('d-none');
         if (user.admin) {
             document.getElementById('adminMenu').classList.remove('d-none');
-            loadAdminMessages();
+            loadMessagesForAdmin();
         } else {
-            alert('Usuário comum logado');
+            document.getElementById('userMenu').classList.remove('d-none');
+            loadMessagesForUser();
         }
     } else {
         const feedback = document.getElementById('loginFeedback');
@@ -32,7 +33,7 @@ document.getElementById('loginForm').addEventListener('submit', function (e) {
 });
 
 // Função para exibir mensagens do admin
-function loadAdminMessages() {
+function loadMessagesForAdmin() {
     const adminMessages = document.getElementById('recados');
     adminMessages.innerHTML = '';
     if (messages.length > 0) {
@@ -51,12 +52,31 @@ function loadAdminMessages() {
     }
 }
 
-// Função para excluir um recado específico
+// Função para exibir apenas as mensagens para o usuário comum
+function loadMessagesForUser() {
+    const userMessages = document.getElementById('recados');
+    userMessages.innerHTML = '';
+    if (messages.length > 0) {
+        messages.forEach((msg) => {
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('mb-3', 'p-2', 'border', 'rounded');
+            messageElement.innerHTML = `
+                <strong>${msg.sender}</strong>: ${msg.text}<br>
+                <small class="text-muted">Enviado em: ${msg.timestamp}</small>
+            `;
+            userMessages.appendChild(messageElement);
+        });
+    } else {
+        userMessages.innerHTML = '<p class="text-muted">Não há recados disponíveis.</p>';
+    }
+}
+
+// Função para excluir um recado específico (apenas para admin)
 function deleteSpecificMessage(index) {
     if (confirm('Tem certeza de que deseja excluir este recado?')) {
         messages.splice(index, 1);
         localStorage.setItem('messages', JSON.stringify(messages));
-        loadAdminMessages();
+        loadMessagesForAdmin();
         alert('Recado excluído com sucesso!');
     }
 }
@@ -119,7 +139,7 @@ document.getElementById('sendMessageButton').addEventListener('click', function 
         localStorage.setItem('messages', JSON.stringify(messages));
         document.getElementById('messageText').value = '';
         alert('Recado enviado com sucesso!');
-        loadAdminMessages();
+        loadMessagesForAdmin();
     } else {
         alert('O recado não pode estar vazio!');
     }
@@ -128,6 +148,13 @@ document.getElementById('sendMessageButton').addEventListener('click', function 
 // Logout do Admin
 document.getElementById('logoutButton').addEventListener('click', function () {
     document.getElementById('adminMenu').classList.add('d-none');
+    document.getElementById('loginForm').classList.remove('d-none');
+    localStorage.removeItem('loggedInUser');
+});
+
+// Logout do Usuário
+document.getElementById('logoutUserButton').addEventListener('click', function () {
+    document.getElementById('userMenu').classList.add('d-none');
     document.getElementById('loginForm').classList.remove('d-none');
     localStorage.removeItem('loggedInUser');
 });
