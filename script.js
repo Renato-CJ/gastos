@@ -1,29 +1,3 @@
-// Funções de login e redirecionamento
-document.getElementById('loginForm').addEventListener('submit', function (e) {
-    e.preventDefault();
-
-    const username = document.getElementById('loginUsername').value;
-    const password = document.getElementById('loginPassword').value;
-
-    const user = users.find(u => u.username === username && u.password === password);
-
-    if (user) {
-        // Salva o usuário logado no localStorage
-        localStorage.setItem('loggedInUser', JSON.stringify(user));
-
-        // Redireciona para a página apropriada
-        if (user.admin) {
-            window.location.href = "adminPage.html"; // Página do admin
-        } else {
-            window.location.href = "userPage.html";  // Página do usuário
-        }
-    } else {
-        const feedback = document.getElementById('loginFeedback');
-        feedback.textContent = 'Usuário ou senha inválidos!';
-        feedback.classList.remove('d-none');
-    }
-});
-
 // Função para carregar mensagens para o usuário comum
 function loadUserMessages() {
     const userMessages = document.getElementById('userMessages');
@@ -52,7 +26,7 @@ function initUserPage() {
     if (!loggedInUser) {
         window.location.href = "loginPage.html"; // Redireciona para o login se não estiver logado
     } else {
-        // Carregar as mensagens
+        // Carregar as mensagens do administrador
         loadUserMessages();
     }
 }
@@ -62,6 +36,32 @@ document.getElementById('logoutButton').addEventListener('click', function () {
     // Limpa o localStorage e redireciona para o login
     localStorage.removeItem('loggedInUser');
     window.location.href = "loginPage.html"; // Redireciona para a página de login
+});
+
+// Função de login e redirecionamento
+document.getElementById('loginForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    const username = document.getElementById('loginUsername').value;
+    const password = document.getElementById('loginPassword').value;
+
+    const user = users.find(u => u.username === username && u.password === password);
+
+    if (user) {
+        // Salva o usuário logado no localStorage
+        localStorage.setItem('loggedInUser', JSON.stringify(user));
+
+        // Redireciona para a página apropriada
+        if (user.admin) {
+            window.location.href = "adminPage.html"; // Página do admin
+        } else {
+            window.location.href = "userPage.html";  // Página do usuário
+        }
+    } else {
+        const feedback = document.getElementById('loginFeedback');
+        feedback.textContent = 'Usuário ou senha inválidos!';
+        feedback.classList.remove('d-none');
+    }
 });
 
 // Função de inicialização da página de admin
