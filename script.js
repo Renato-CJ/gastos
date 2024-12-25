@@ -1,3 +1,36 @@
+const defaultAdmin = { username: 'admin', password: 'admin123', admin: true };
+
+let users = JSON.parse(localStorage.getItem('users')) || [];
+let messages = JSON.parse(localStorage.getItem('messages')) || [];
+
+if (!users.some(user => user.username === defaultAdmin.username)) {
+    users.push(defaultAdmin);
+    localStorage.setItem('users', JSON.stringify(users));
+}
+
+document.getElementById('loginForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    const username = document.getElementById('loginUsername').value;
+    const password = document.getElementById('loginPassword').value;
+
+    const user = users.find(u => u.username === username && u.password === password);
+
+    if (user) {
+        if (user.admin) {
+            window.location.href = 'admin.html';
+        } else {
+            window.location.href = 'user.html';
+        }
+    } else {
+        const feedback = document.getElementById('loginFeedback');
+        feedback.textContent = 'Usuário ou senha inválidos!';
+        feedback.classList.remove('d-none');
+    }
+});
+
+
+
+
 // Função de login
 document.getElementById('loginForm').addEventListener('submit', function (e) {
     e.preventDefault();
