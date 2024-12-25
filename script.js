@@ -117,6 +117,29 @@ function initAdminMenu() {
     loadUsers();
 }
 
+function loadMessages() {
+    const recados = document.getElementById('recados');
+    recados.innerHTML = '';
+    if (messages.length > 0) {
+        messages.forEach(msg => {
+            const messageElement = document.createElement('div');
+            messageElement.innerHTML = `
+                <p><strong>${msg.sender}</strong>: ${msg.text}</p>
+                <small class="text-muted">Enviado em: ${msg.timestamp}</small>
+            `;
+            recados.appendChild(messageElement);
+        });
+    } else {
+        recados.innerHTML = '<p class="text-muted">Nenhum recado disponível.</p>';
+    }
+}
+
+document.getElementById('logoutUser').addEventListener('click', function () {
+    document.getElementById('userView').classList.add('d-none');
+    document.getElementById('loginForm').classList.remove('d-none');
+});
+
+
 // Função de login
 document.getElementById('loginForm').addEventListener('submit', function (e) {
     e.preventDefault();
