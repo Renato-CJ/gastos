@@ -5,47 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Recados da Qualidade</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            margin: 0;
-            background-color: #f8f9fa;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            animation: fadeIn 1s ease-in-out;
-            width: 100%;
-            max-width: 400px;
-            padding: 20px;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: scale(0.9);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-
-        .hidden {
-            display: none;
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container mt-5">
-        <h1 class="text-center text-primary">Bem-vindo ao Recado da Qualidade</h1>
-
-        <!-- Login Form -->
-        <form id="loginForm" class="mt-4">
-            <h2>Login</h2>
-            <div id="loginFeedback" class="text-danger mb-2 d-none"></div>
+    <div id="mainContainer" class="container d-flex justify-content-center align-items-center min-vh-100">
+        <form id="loginForm" class="shadow p-4 bg-white rounded">
+            <h2 class="text-center mb-4">Login</h2>
+            <div id="loginFeedback" class="text-danger mb-3 d-none"></div>
             <div class="mb-3">
                 <label for="loginUsername" class="form-label">Nome de Usuário</label>
                 <input type="text" id="loginUsername" class="form-control" required>
@@ -54,217 +20,91 @@
                 <label for="loginPassword" class="form-label">Senha</label>
                 <input type="password" id="loginPassword" class="form-control" required>
             </div>
-            <button type="submit" class="btn btn-primary">Entrar</button>
+            <button type="submit" class="btn btn-primary w-100">Entrar</button>
         </form>
 
-        <div id="adminMenu" class="d-none">
-            <div class="dropdown mb-4">
-                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                    Menu Administrativo
+        <!-- Menu Administrador -->
+        <div id="adminMenu" class="d-none shadow p-4 bg-white rounded">
+            <h2 class="text-center mb-4">Bem-vindo ao Recado da Qualidade!</h2>
+            <div class="dropdown mt-4">
+                <button class="btn btn-secondary dropdown-toggle w-100" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                    Usuários
                 </button>
                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                     <li><a class="dropdown-item" href="#" id="showRegistration">Registrar Usuário</a></li>
+                    <li><a class="dropdown-item" href="#" id="deleteUser">Excluir Usuário</a></li>
+                </ul>
+            </div>
+
+            <div class="dropdown mt-2">
+                <button class="btn btn-secondary dropdown-toggle w-100" type="button" id="dropdownMenuMessages" data-bs-toggle="dropdown" aria-expanded="false">
+                    Recados
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenuMessages">
                     <li><a class="dropdown-item" href="#" id="showMessages">Enviar Recado</a></li>
                     <li><a class="dropdown-item" href="#" id="showStatus">Verificar Status</a></li>
                     <li><a class="dropdown-item" href="#" id="showAllMessages">Ver Todos os Recados</a></li>
+                    <li><a class="dropdown-item" href="#" id="deleteMessage">Excluir Recados</a></li>
                 </ul>
             </div>
+
+            <!-- Formulários de ações -->
+            <div id="registrationForm" class="d-none mt-4">
+                <h3>Registrar Usuário</h3>
+                <form>
+                    <div class="mb-3">
+                        <label for="newUsername" class="form-label">Nome de Usuário</label>
+                        <input type="text" id="newUsername" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="newPassword" class="form-label">Senha</label>
+                        <input type="password" id="newPassword" class="form-control" required>
+                    </div>
+                    <button type="button" id="registerUser" class="btn btn-success">Registrar</button>
+                    <button type="button" id="backFromRegistration" class="btn btn-secondary mt-2">Voltar</button>
+                </form>
+            </div>
+
+            <div id="deleteUserForm" class="d-none mt-4">
+                <h3>Excluir Usuário</h3>
+                <form>
+                    <div class="mb-3">
+                        <label for="deleteUsername" class="form-label">Nome de Usuário</label>
+                        <input type="text" id="deleteUsername" class="form-control" required>
+                    </div>
+                    <button type="button" id="deleteUserButton" class="btn btn-danger">Excluir</button>
+                    <button type="button" id="backFromDelete" class="btn btn-secondary mt-2">Voltar</button>
+                </form>
+            </div>
+
+            <div id="sendMessageForm" class="d-none mt-4">
+                <h3>Enviar Recado</h3>
+                <form>
+                    <div class="mb-3">
+                        <label for="messageText" class="form-label">Recado</label>
+                        <textarea id="messageText" class="form-control" rows="4" required></textarea>
+                    </div>
+                    <button type="button" id="sendMessageButton" class="btn btn-primary">Enviar</button>
+                    <button type="button" id="backFromSendMessage" class="btn btn-secondary mt-2">Voltar</button>
+                </form>
+            </div>
+
+            <div id="allMessages" class="d-none mt-4">
+                <h3>Todos os Recados</h3>
+                <div id="adminMessages"></div>
+                <button type="button" id="backFromAllMessages" class="btn btn-secondary mt-2">Voltar</button>
+            </div>
         </div>
 
-        <!-- Registration Form -->
-        <form id="registrationForm" class="mt-4 d-none">
-            <h2>Registro</h2>
-            <div id="registrationFeedback" class="text-danger mb-2 d-none"></div>
-            <div class="mb-3">
-                <label for="username" class="form-label">Nome de Usuário</label>
-                <input type="text" id="username" class="form-control" required>
-            </div>
-            <div class="mb-3">
-                <label for="password" class="form-label">Senha</label>
-                <input type="password" id="password" class="form-control" maxlength="10" required>
-            </div>
-            <button type="submit" class="btn btn-success">Registrar</button>
-        </form>
-
-        <!-- Message Form -->
-        <form id="messageForm" class="mt-4 d-none">
-            <h2>Enviar Recado</h2>
-            <div id="messageFeedback" class="text-danger mb-2 d-none"></div>
-            <div class="mb-3">
-                <label for="recipient" class="form-label">Destinatário</label>
-                <select id="recipient" class="form-select" required>
-                    <option value="all">Todos</option>
-                </select>
-            </div>
-            <div class="mb-3">
-                <label for="message" class="form-label">Mensagem</label>
-                <textarea id="message" class="form-control" rows="4" placeholder="Digite sua mensagem e use emojis! 😃" required></textarea>
-            </div>
-            <button type="submit" class="btn btn-primary">Enviar Recado</button>
-        </form>
-
-        <!-- Status View -->
-        <div id="statusView" class="mt-4 d-none">
-            <h2>Status dos Usuários</h2>
-            <ul id="userStatusList" class="list-group"></ul>
-        </div>
-
-        <!-- All Messages View -->
-        <div id="allMessagesView" class="mt-4 d-none">
-            <h2>Todos os Recados</h2>
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>Destinatário</th>
-                        <th>Mensagem</th>
-                        <th>Data</th>
-                        <th>Ações</th>
-                    </tr>
-                </thead>
-                <tbody id="allMessagesTableBody"></tbody>
-            </table>
-        </div>
-
-        <!-- User Recado View -->
-        <div id="userView" class="d-none">
-            <h2 class="mt-5">Recados Recebidos</h2>
-            <ul id="messagesList" class="list-group mt-3"></ul>
+        <!-- Interface do Usuário -->
+        <div id="userView" class="d-none shadow p-4 bg-white rounded">
+            <h2 class="text-center mb-4">Bem-vindo ao Recado da Qualidade!</h2>
+            <div id="recados" class="mb-4"></div>
+            <button id="logoutUser" class="btn btn-danger w-100">Sair</button>
         </div>
     </div>
 
-    <script>
-        // Persistência usando localStorage
-        const loadStorage = (key) => JSON.parse(localStorage.getItem(key)) || [];
-        const saveStorage = (key, data) => localStorage.setItem(key, JSON.stringify(data));
-
-        let adminUsers = [{ username: 'admin1', password: 'admin123' }];
-        let users = loadStorage('users');
-        let messages = loadStorage('messages');
-        let onlineUsers = loadStorage('onlineUsers') || {};
-
-        // Sincronizar dados com localStorage
-        function syncUsers() {
-            users = loadStorage('users');
-        }
-
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const username = document.getElementById('loginUsername').value;
-            const password = document.getElementById('loginPassword').value;
-            const admin = adminUsers.find(user => user.username === username && user.password === password);
-            const user = users.find(user => user.username === username && user.password === password);
-            
-            if (admin || user) {
-                onlineUsers[username] = true;
-                saveStorage('onlineUsers', onlineUsers);
-                updateUserStatus();
-                document.getElementById('loginForm').classList.add('d-none');
-                if (admin) {
-                    document.getElementById('adminMenu').classList.remove('d-none');
-                } else {
-                    document.getElementById('userView').classList.remove('d-none');
-                    updateMessagesList(username);
-                }
-            } else {
-                const feedback = document.getElementById('loginFeedback');
-                feedback.textContent = 'Usuário ou senha inválidos!';
-                feedback.classList.remove('d-none');
-            }
-        });
-
-        document.getElementById('showRegistration').addEventListener('click', function(e) {
-            e.preventDefault();
-            showSection('registrationForm');
-        });
-
-        document.getElementById('showMessages').addEventListener('click', function(e) {
-            e.preventDefault();
-            showSection('messageForm');
-        });
-
-        document.getElementById('showStatus').addEventListener('click', function(e) {
-            e.preventDefault();
-            showSection('statusView');
-            updateUserStatus();
-        });
-
-        document.getElementById('showAllMessages').addEventListener('click', function(e) {
-            e.preventDefault();
-            showSection('allMessagesView');
-            updateAllMessagesTable();
-        });
-
-        function showSection(sectionId) {
-            const sections = ['registrationForm', 'messageForm', 'statusView', 'allMessagesView'];
-            sections.forEach(id => {
-                document.getElementById(id).classList.add('d-none');
-            });
-            document.getElementById(sectionId).classList.remove('d-none');
-        }
-
-        document.getElementById('registrationForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-
-            if (users.find(user => user.username === username)) {
-                const feedback = document.getElementById('registrationFeedback');
-                feedback.textContent = 'Usuário já registrado!';
-                feedback.classList.remove('d-none');
-                return;
-            }
-
-            users.push({ username, password });
-            saveStorage('users', users);
-            const recipientSelect = document.getElementById('recipient');
-            const option = document.createElement('option');
-            option.value = username;
-            option.textContent = username;
-            recipientSelect.appendChild(option);
-
-            document.getElementById('registrationForm').reset();
-            alert('Usuário registrado com sucesso!');
-        });
-
-        document.getElementById('messageForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const username = Object.keys(onlineUsers)[0];
-            const recipient = document.getElementById('recipient').value;
-            const message = document.getElementById('message').value;
-            const timestamp = new Date().toLocaleString();
-
-            messages.push({ recipient, message, timestamp });
-            saveStorage('messages', messages);
-            updateMessagesList();
-            document.getElementById('messageForm').reset();
-        });
-
-        document.getElementById('logoutUser').addEventListener('click', function () {
-            document.getElementById('userView').classList.add('d-none');
-            document.getElementById('loginForm').classList.remove('d-none');
-        });
-
-            messages.forEach(msg => {
-                const row = document.createElement('tr');
-                row.innerHTML = `<td>${msg.recipient === 'all' ? 'Todos' : msg.recipient}</td><td>${msg.message}</td><td>${msg.timestamp}</td>`;
-                tableBody.appendChild(row);
-            });
-        }
-
-        function updateUserStatus() {
-            const userStatusList = document.getElementById('userStatusList');
-            userStatusList.innerHTML = '';
-
-            users.forEach(user => {
-                const statusItem = document.createElement('li');
-                statusItem.className = 'list-group-item';
-                const status = onlineUsers[user.username] ? 'Conectado' : 'Desconectado';
-                statusItem.textContent = `${user.username}: ${status}`;
-                userStatusList.appendChild(statusItem);
-            });
-        }
-    </script>
-
+    <script src="script.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

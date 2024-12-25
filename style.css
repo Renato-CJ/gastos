@@ -1,0 +1,28 @@
+body {
+    background-color: #f8f9fa;
+}
+
+#mainContainer {
+    max-width: 600px;
+}
+
+form {
+    width: 100%;
+}
+
+#adminMenu, #userView {
+    max-width: 600px;
+}
+
+#adminMessages, #recados {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+button {
+    width: 100%;
+}
+
+textarea {
+    resize: none;
+}
