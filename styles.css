@@ -1,0 +1,25 @@
+body {
+    background-color: #f4f6f9;
+    font-family: Arial, sans-serif;
+}
+
+#mainContainer {
+    max-width: 600px;
+}
+
+form {
+    width: 100%;
+}
+
+button {
+    margin-top: 10px;
+}
+
+#recados {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+#recados p {
+    font-size: 1.2em;
+}
