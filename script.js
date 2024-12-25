@@ -1,47 +1,137 @@
+// Usuário administrador padrão
 const defaultAdmin = { username: 'admin', password: 'admin123', admin: true };
-let users = JSON.parse(localStorage.getItem('users')) || [];
-const messages = JSON.parse(localStorage.getItem('messages')) || [];
 
-// Adiciona o usuário admin se não estiver na lista de usuários
+// Carrega usuários e mensagens do localStorage
+let users = JSON.parse(localStorage.getItem('users')) || [];
+let messages = JSON.parse(localStorage.getItem('messages')) || [];
+
+// Adiciona o administrador ao localStorage, se não existir
 if (!users.some(user => user.username === defaultAdmin.username)) {
     users.push(defaultAdmin);
     localStorage.setItem('users', JSON.stringify(users));
 }
 
-// Carrega as mensagens
-function loadMessages() {
-    const recados = document.getElementById('recados');
-    recados.innerHTML = '';
+// Função para carregar mensagens no menu do administrador
+function loadAdminMessages() {
+    const adminMessages = document.getElementById('adminMessages');
+    adminMessages.innerHTML = '';
     if (messages.length > 0) {
-        messages.forEach(msg => {
+        messages.forEach((msg, index) => {
             const messageElement = document.createElement('div');
-            messageElement.classList.add('mb-3');
-            messageElement.innerHTML = `<strong>${msg.sender}</strong>: ${msg.text}<br><small class="text-muted">Enviado em: ${msg.timestamp}</small>`;
-            recados.appendChild(messageElement);
+            messageElement.innerHTML = `
+                <p><strong>${msg.sender}</strong>: ${msg.text}</p>
+                <small class="text-muted">Enviado em: ${msg.timestamp}</small>
+                <button class="btn btn-sm btn-warning mt-2 me-2" onclick="editMessage(${index})">Editar</button>
+                <button class="btn btn-sm btn-danger mt-2" onclick="deleteMessage(${index})">Excluir</button>
+            `;
+            adminMessages.appendChild(messageElement);
         });
     } else {
-        recados.innerHTML = '<p class="text-muted">Não há recados disponíveis.</p>';
+        adminMessages.innerHTML = '<p class="text-muted">Não há recados disponíveis.</p>';
     }
 }
 
-// Função para login
+// Função para carregar a lista de usuários
+function loadUsers() {
+    const userList = document.getElementById('userList');
+    userList.innerHTML = '';
+    users.forEach((user, index) => {
+        const userElement = document.createElement('div');
+        userElement.innerHTML = `
+            <p>${user.username} (${user.admin ? 'Admin' : 'Usuário'})</p>
+            <button class="btn btn-sm btn-danger mt-2" onclick="deleteUser(${index})">Excluir</button>
+        `;
+        userList.appendChild(userElement);
+    });
+}
+
+// Função para enviar um recado
+document.getElementById('messageForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    const messageText = document.getElementById('messageText').value;
+    const newMessage = {
+        sender: 'Admin',
+        text: messageText,
+        timestamp: new Date().toLocaleString()
+    };
+    messages.push(newMessage);
+    localStorage.setItem('messages', JSON.stringify(messages)); // Atualiza apenas mensagens
+    document.getElementById('messageText').value = '';
+    loadAdminMessages();
+});
+
+// Função para registrar um novo usuário
+document.getElementById('registerUserForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    const username = document.getElementById('newUsername').value;
+    const password = document.getElementById('newPassword').value;
+
+    if (users.some(user => user.username === username)) {
+        alert('Usuário já existe!');
+        return;
+    }
+
+    const newUser = { username, password, admin: false };
+    users.push(newUser);
+    localStorage.setItem('users', JSON.stringify(users)); // Atualiza apenas usuários
+    document.getElementById('newUsername').value = '';
+    document.getElementById('newPassword').value = '';
+    loadUsers();
+});
+
+// Função para excluir um usuário
+function deleteUser(index) {
+    if (users[index].username === 'admin') {
+        alert('Não é possível excluir o administrador padrão.');
+        return;
+    }
+
+    users.splice(index, 1);
+    localStorage.setItem('users', JSON.stringify(users)); // Atualiza apenas usuários
+    loadUsers();
+}
+
+// Função para excluir uma mensagem
+function deleteMessage(index) {
+    messages.splice(index, 1);
+    localStorage.setItem('messages', JSON.stringify(messages)); // Atualiza apenas mensagens
+    loadAdminMessages();
+}
+
+// Função para editar uma mensagem
+function editMessage(index) {
+    const newText = prompt('Edite o recado:', messages[index].text);
+    if (newText !== null) {
+        messages[index].text = newText;
+        messages[index].timestamp = new Date().toLocaleString();
+        localStorage.setItem('messages', JSON.stringify(messages)); // Atualiza apenas mensagens
+        loadAdminMessages();
+    }
+}
+
+// Inicializa o menu do administrador
+function initAdminMenu() {
+    loadAdminMessages();
+    loadUsers();
+}
+
+// Função de login
 document.getElementById('loginForm').addEventListener('submit', function (e) {
     e.preventDefault();
 
     const username = document.getElementById('loginUsername').value;
     const password = document.getElementById('loginPassword').value;
+
     const user = users.find(u => u.username === username && u.password === password);
 
     if (user) {
-        // Esconde o formulário de login
         document.getElementById('loginForm').classList.add('d-none');
-
-        // Exibe a visão do usuário
         if (user.admin) {
-            // Exibe menu administrativo
             document.getElementById('adminMenu').classList.remove('d-none');
+            initAdminMenu();
         } else {
-            // Exibe a visão do colaborador
             document.getElementById('userView').classList.remove('d-none');
             loadMessages();
         }
@@ -52,16 +142,13 @@ document.getElementById('loginForm').addEventListener('submit', function (e) {
     }
 });
 
-// Logout para administrador
+// Funções de logout
 document.getElementById('logoutButton').addEventListener('click', function () {
-    // Esconde o menu do administrador e volta ao login
     document.getElementById('adminMenu').classList.add('d-none');
     document.getElementById('loginForm').classList.remove('d-none');
 });
 
-// Logout para colaborador
 document.getElementById('logoutUser').addEventListener('click', function () {
-    // Esconde a visão do colaborador e volta ao login
     document.getElementById('userView').classList.add('d-none');
     document.getElementById('loginForm').classList.remove('d-none');
 });

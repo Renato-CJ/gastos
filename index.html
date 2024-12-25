@@ -26,15 +26,53 @@
 
         <!-- Menu Administrativo -->
         <div id="adminMenu" class="d-none shadow p-4 bg-white rounded">
-            <h2 class="text-center mb-4">Bem-vindo ao Recado da Qualidade!</h2>
-            <button class="btn btn-danger w-100" id="logoutButton">Sair</button>
-        </div>
+            <h2 class="text-center mb-4">Painel Administrativo</h2>
+            <div class="row">
+                <!-- Enviar Recado -->
+                <div class="col-md-6">
+                    <form id="messageForm" class="mb-4">
+                        <h5 class="text-center">Enviar Recado</h5>
+                        <div class="mb-3">
+                            <textarea id="messageText" class="form-control" rows="3" required placeholder="Digite o recado..."></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-success w-100">Enviar</button>
+                    </form>
+                </div>
 
-        <!-- Menu do Colaborador -->
-        <div id="userView" class="d-none shadow p-4 bg-white rounded">
-            <h2 class="text-center mb-4">Recados da Qualidade</h2>
-            <div id="recados" class="mb-4"></div>
-            <button id="logoutUser" class="btn btn-danger w-100">Sair</button>
+                <!-- Registrar Usuário -->
+                <div class="col-md-6">
+                    <form id="registerUserForm" class="mb-4">
+                        <h5 class="text-center">Registrar Usuário</h5>
+                        <div class="mb-3">
+                            <input type="text" id="newUsername" class="form-control" placeholder="Nome de Usuário" required>
+                        </div>
+                        <div class="mb-3">
+                            <input type="password" id="newPassword" class="form-control" placeholder="Senha" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Registrar</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="row">
+                <!-- Recados Enviados -->
+                <div class="col-md-6">
+                    <h5 class="text-center">Recados Enviados</h5>
+                    <div id="adminMessages" class="mb-4 border p-3 bg-light rounded"></div>
+                </div>
+
+                <!-- Usuários Cadastrados -->
+                <div class="col-md-6">
+                    <h5 class="text-center">Usuários Cadastrados</h5>
+                    <div id="userList" class="mb-4 border p-3 bg-light rounded"></div>
+                </div>
+            </div>
+
+            <!-- Botões -->
+            <div class="d-flex justify-content-between">
+                <button class="btn btn-secondary" id="backButton">Voltar</button>
+                <button class="btn btn-danger" id="logoutButton">Sair</button>
+            </div>
         </div>
     </div>
 

@@ -4,7 +4,7 @@ body {
 }
 
 #mainContainer {
-    max-width: 600px;
+    max-width: 900px;
 }
 
 form {
@@ -15,11 +15,19 @@ button {
     margin-top: 10px;
 }
 
-#recados {
+#recados, #adminMessages, #userList {
     max-height: 300px;
     overflow-y: auto;
 }
 
-#recados p {
-    font-size: 1.2em;
+#recados div, #adminMessages div, #userList div {
+    margin-bottom: 15px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #fff;
+}
+
+#recados p, #adminMessages div p, #userList div p {
+    margin: 0;
 }
