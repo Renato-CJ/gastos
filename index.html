@@ -1,110 +1,112 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Recados da Qualidade</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
+    <title>Plataforma de Recados</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="style.css" rel="stylesheet">
 </head>
+
 <body>
-    <div id="mainContainer" class="container d-flex justify-content-center align-items-center min-vh-100">
-        <form id="loginForm" class="shadow p-4 bg-white rounded">
-            <h2 class="text-center mb-4">Login</h2>
-            <div id="loginFeedback" class="text-danger mb-3 d-none"></div>
-            <div class="mb-3">
-                <label for="loginUsername" class="form-label">Nome de Usuário</label>
-                <input type="text" id="loginUsername" class="form-control" required>
-            </div>
-            <div class="mb-3">
-                <label for="loginPassword" class="form-label">Senha</label>
-                <input type="password" id="loginPassword" class="form-control" required>
-            </div>
-            <button type="submit" class="btn btn-primary w-100">Entrar</button>
-        </form>
+    <div class="container mt-5">
 
-        <!-- Menu Administrador -->
-        <div id="adminMenu" class="d-none shadow p-4 bg-white rounded">
-            <h2 class="text-center mb-4">Bem-vindo ao Recado da Qualidade!</h2>
-            <div class="dropdown mt-4">
-                <button class="btn btn-secondary dropdown-toggle w-100" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                    Usuários
-                </button>
-                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                    <li><a class="dropdown-item" href="#" id="showRegistration">Registrar Usuário</a></li>
-                    <li><a class="dropdown-item" href="#" id="deleteUser">Excluir Usuário</a></li>
-                </ul>
-            </div>
-
-            <div class="dropdown mt-2">
-                <button class="btn btn-secondary dropdown-toggle w-100" type="button" id="dropdownMenuMessages" data-bs-toggle="dropdown" aria-expanded="false">
-                    Recados
-                </button>
-                <ul class="dropdown-menu" aria-labelledby="dropdownMenuMessages">
-                    <li><a class="dropdown-item" href="#" id="showMessages">Enviar Recado</a></li>
-                    <li><a class="dropdown-item" href="#" id="showStatus">Verificar Status</a></li>
-                    <li><a class="dropdown-item" href="#" id="showAllMessages">Ver Todos os Recados</a></li>
-                    <li><a class="dropdown-item" href="#" id="deleteMessage">Excluir Recados</a></li>
-                </ul>
-            </div>
-
-            <!-- Formulários de ações -->
-            <div id="registrationForm" class="d-none mt-4">
-                <h3>Registrar Usuário</h3>
-                <form>
-                    <div class="mb-3">
-                        <label for="newUsername" class="form-label">Nome de Usuário</label>
-                        <input type="text" id="newUsername" class="form-control" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="newPassword" class="form-label">Senha</label>
-                        <input type="password" id="newPassword" class="form-control" required>
-                    </div>
-                    <button type="button" id="registerUser" class="btn btn-success">Registrar</button>
-                    <button type="button" id="backFromRegistration" class="btn btn-secondary mt-2">Voltar</button>
-                </form>
-            </div>
-
-            <div id="deleteUserForm" class="d-none mt-4">
-                <h3>Excluir Usuário</h3>
-                <form>
-                    <div class="mb-3">
-                        <label for="deleteUsername" class="form-label">Nome de Usuário</label>
-                        <input type="text" id="deleteUsername" class="form-control" required>
-                    </div>
-                    <button type="button" id="deleteUserButton" class="btn btn-danger">Excluir</button>
-                    <button type="button" id="backFromDelete" class="btn btn-secondary mt-2">Voltar</button>
-                </form>
-            </div>
-
-            <div id="sendMessageForm" class="d-none mt-4">
-                <h3>Enviar Recado</h3>
-                <form>
-                    <div class="mb-3">
-                        <label for="messageText" class="form-label">Recado</label>
-                        <textarea id="messageText" class="form-control" rows="4" required></textarea>
-                    </div>
-                    <button type="button" id="sendMessageButton" class="btn btn-primary">Enviar</button>
-                    <button type="button" id="backFromSendMessage" class="btn btn-secondary mt-2">Voltar</button>
-                </form>
-            </div>
-
-            <div id="allMessages" class="d-none mt-4">
-                <h3>Todos os Recados</h3>
-                <div id="adminMessages"></div>
-                <button type="button" id="backFromAllMessages" class="btn btn-secondary mt-2">Voltar</button>
-            </div>
+        <!-- Login -->
+        <div id="loginForm">
+            <h3>Login</h3>
+            <form>
+                <div class="mb-3">
+                    <label for="loginUsername" class="form-label">Usuário</label>
+                    <input type="text" id="loginUsername" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label for="loginPassword" class="form-label">Senha</label>
+                    <input type="password" id="loginPassword" class="form-control" required>
+                </div>
+                <div id="loginFeedback" class="text-danger d-none"></div>
+                <button type="submit" class="btn btn-primary">Entrar</button>
+            </form>
         </div>
 
-        <!-- Interface do Usuário -->
-        <div id="userView" class="d-none shadow p-4 bg-white rounded">
-            <h2 class="text-center mb-4">Bem-vindo ao Recado da Qualidade!</h2>
-            <div id="recados" class="mb-4"></div>
-            <button id="logoutUser" class="btn btn-danger w-100">Sair</button>
+        <!-- Menu Administrativo -->
+        <div id="adminMenu" class="d-none">
+            <h3>Menu Administrativo</h3>
+            <div class="row">
+                <div class="col-3">
+                    <button id="registerUser" class="btn btn-outline-info w-100 mb-3">
+                        <i class="bi bi-person-plus"></i> Registrar Usuário
+                    </button>
+                </div>
+                <div class="col-3">
+                    <button id="deleteUser" class="btn btn-outline-danger w-100 mb-3">
+                        <i class="bi bi-person-dash"></i> Excluir Usuário
+                    </button>
+                </div>
+                <div class="col-3">
+                    <button id="sendMessage" class="btn btn-outline-success w-100 mb-3">
+                        <i class="bi bi-send"></i> Enviar Recado
+                    </button>
+                </div>
+                <div class="col-3">
+                    <button id="viewMessages" class="btn btn-outline-warning w-100 mb-3">
+                        <i class="bi bi-eye"></i> Ver Recados
+                    </button>
+                </div>
+            </div>
+            <button id="logoutButton" class="btn btn-danger">Sair</button>
         </div>
+
+        <!-- Formulário de Registro de Usuário -->
+        <div id="registrationForm" class="d-none">
+            <h3>Registrar Usuário</h3>
+            <form>
+                <div class="mb-3">
+                    <label for="newUsername" class="form-label">Usuário</label>
+                    <input type="text" id="newUsername" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label for="newPassword" class="form-label">Senha</label>
+                    <input type="password" id="newPassword" class="form-control" required>
+                </div>
+                <button type="button" id="registerUserBtn" class="btn btn-primary">Registrar</button>
+            </form>
+        </div>
+
+        <!-- Formulário de Excluir Usuário -->
+        <div id="deleteUserForm" class="d-none">
+            <h3>Excluir Usuário</h3>
+            <form>
+                <div class="mb-3">
+                    <label for="deleteUsername" class="form-label">Usuário</label>
+                    <input type="text" id="deleteUsername" class="form-control" required>
+                </div>
+                <button type="button" id="deleteUserButton" class="btn btn-danger">Excluir</button>
+            </form>
+        </div>
+
+        <!-- Formulário de Enviar Recado -->
+        <div id="sendMessageForm" class="d-none">
+            <h3>Enviar Recado</h3>
+            <form>
+                <div class="mb-3">
+                    <label for="messageText" class="form-label">Texto do Recado</label>
+                    <textarea id="messageText" class="form-control" rows="4" required></textarea>
+                </div>
+                <button type="button" id="sendMessageButton" class="btn btn-success">Enviar</button>
+            </form>
+        </div>
+
+        <!-- Exibição dos Recados -->
+        <div id="allMessages" class="d-none">
+            <h3>Recados</h3>
+            <div id="recados"></div>
+        </div>
+        
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.js"></script>
     <script src="script.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>

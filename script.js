@@ -22,8 +22,7 @@ document.getElementById('loginForm').addEventListener('submit', function (e) {
             document.getElementById('adminMenu').classList.remove('d-none');
             loadAdminMessages();
         } else {
-            document.getElementById('userView').classList.remove('d-none');
-            loadMessages();
+            alert('Usuário comum logado');
         }
     } else {
         const feedback = document.getElementById('loginFeedback');
@@ -34,7 +33,7 @@ document.getElementById('loginForm').addEventListener('submit', function (e) {
 
 // Função para exibir mensagens do admin
 function loadAdminMessages() {
-    const adminMessages = document.getElementById('adminMessages');
+    const adminMessages = document.getElementById('recados');
     adminMessages.innerHTML = '';
     if (messages.length > 0) {
         messages.forEach((msg, index) => {
@@ -58,26 +57,27 @@ function deleteSpecificMessage(index) {
         messages.splice(index, 1);
         localStorage.setItem('messages', JSON.stringify(messages));
         loadAdminMessages();
-        loadMessages();
         alert('Recado excluído com sucesso!');
     }
 }
 
 // Função para verificar se o nome de usuário já existe ao registrar
 document.getElementById('registerUser').addEventListener('click', function () {
+    toggleVisibility('registrationForm');
+});
+
+// Registrar Usuário
+document.getElementById('registerUserBtn').addEventListener('click', function () {
     const username = document.getElementById('newUsername').value;
     const password = document.getElementById('newPassword').value;
 
-    // Verifica se os campos estão preenchidos
     if (username && password) {
-        // Verifica se o nome de usuário já existe
         const existingUser = users.find(user => user.username === username);
         if (existingUser) {
             alert('Este nome de usuário já está registrado!');
             return;
         }
 
-        // Registra o novo usuário
         users.push({ username, password, admin: false });
         localStorage.setItem('users', JSON.stringify(users));
         alert('Usuário registrado com sucesso!');
@@ -87,31 +87,12 @@ document.getElementById('registerUser').addEventListener('click', function () {
     }
 });
 
-// Logout do admin
-document.getElementById('logoutButton').addEventListener('click', function () {
-    document.getElementById('adminMenu').classList.add('d-none');
-    document.getElementById('loginForm').classList.remove('d-none');
-    localStorage.removeItem('loggedInUser');
-});
-
-// Logout do usuário
-document.getElementById('logoutUser').addEventListener('click', function () {
-    document.getElementById('userView').classList.add('d-none');
-    document.getElementById('loginForm').classList.remove('d-none');
-    localStorage.removeItem('loggedInUser');
-});
-
-// Exibição do formulário de registrar usuário
-document.getElementById('showRegistration').addEventListener('click', function () {
-    toggleVisibility('registrationForm');
-});
-
-// Exibição do formulário de deletar usuário
-document.getElementById('showDeleteUser').addEventListener('click', function () {
+// Exibir Formulário para Excluir Usuário
+document.getElementById('deleteUser').addEventListener('click', function () {
     toggleVisibility('deleteUserForm');
 });
 
-// Deletar usuário
+// Excluir Usuário
 document.getElementById('deleteUserButton').addEventListener('click', function () {
     const username = document.getElementById('deleteUsername').value;
     users = users.filter(user => user.username !== username);
@@ -120,12 +101,12 @@ document.getElementById('deleteUserButton').addEventListener('click', function (
     toggleVisibility('');
 });
 
-// Exibir o formulário para enviar um recado
-document.getElementById('showMessages').addEventListener('click', function () {
+// Enviar Recado
+document.getElementById('sendMessage').addEventListener('click', function () {
     toggleVisibility('sendMessageForm');
 });
 
-// Enviar recado
+// Enviar Recado
 document.getElementById('sendMessageButton').addEventListener('click', function () {
     const text = document.getElementById('messageText').value;
     if (text) {
@@ -139,16 +120,16 @@ document.getElementById('sendMessageButton').addEventListener('click', function 
         document.getElementById('messageText').value = '';
         alert('Recado enviado com sucesso!');
         loadAdminMessages();
-        loadMessages();
     } else {
         alert('O recado não pode estar vazio!');
     }
 });
 
-// Exibir todas as mensagens para o admin
-document.getElementById('showAllMessages').addEventListener('click', function () {
-    toggleVisibility('allMessages');
-    loadAdminMessages();
+// Logout do Admin
+document.getElementById('logoutButton').addEventListener('click', function () {
+    document.getElementById('adminMenu').classList.add('d-none');
+    document.getElementById('loginForm').classList.remove('d-none');
+    localStorage.removeItem('loggedInUser');
 });
 
 // Função de controle de visibilidade dos formulários
@@ -161,26 +142,3 @@ function toggleVisibility(id) {
         document.getElementById(id).classList.remove('d-none');
     }
 }
-
-// Função para carregar as mensagens para o usuário
-function loadMessages() {
-    const recados = document.getElementById('recados');
-    recados.innerHTML = '';
-    if (messages.length > 0) {
-        messages.forEach(msg => {
-            const messageElement = document.createElement('div');
-            messageElement.classList.add('mb-3');
-            messageElement.innerHTML = `<strong>${msg.sender}</strong>: ${msg.text}<br><small class="text-muted">Enviado em: ${msg.timestamp}</small>`;
-            recados.appendChild(messageElement);
-        });
-    } else {
-        recados.innerHTML = '<p class="text-muted">Não há recados disponíveis.</p>';
-    }
-}
-
-// Verificar status
-document.getElementById('showStatus').addEventListener('click', function () {
-    const status = document.getElementById('status');
-    status.textContent = `Usuário logado: ${localStorage.getItem('loggedInUser') || 'Nenhum'}`;
-    toggleVisibility('statusForm');
-});
