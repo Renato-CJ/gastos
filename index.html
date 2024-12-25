@@ -13,6 +13,7 @@
         <!-- Login Form -->
         <form id="loginForm" class="mt-4">
             <h2>Login</h2>
+            <div id="loginFeedback" class="text-danger mb-2 d-none"></div>
             <div class="mb-3">
                 <label for="loginUsername" class="form-label">Nome de Usuário</label>
                 <input type="text" id="loginUsername" class="form-control" required>
@@ -42,6 +43,7 @@
         <!-- Registration Form -->
         <form id="registrationForm" class="mt-4 d-none">
             <h2>Registro</h2>
+            <div id="registrationFeedback" class="text-danger mb-2 d-none"></div>
             <div class="mb-3">
                 <label for="username" class="form-label">Nome de Usuário</label>
                 <input type="text" id="username" class="form-control" required>
@@ -56,6 +58,7 @@
         <!-- Message Form -->
         <form id="messageForm" class="mt-4 d-none">
             <h2>Enviar Recado</h2>
+            <div id="messageFeedback" class="text-danger mb-2 d-none"></div>
             <div class="mb-3">
                 <label for="recipient" class="form-label">Destinatário</label>
                 <select id="recipient" class="form-select" required>
@@ -98,106 +101,92 @@
     </div>
 
     <script>
-        const adminUsers = [{ username: 'admin1', password: 'admin123' }]; // Administrative users
-        const users = []; // Registered users
-        const messages = []; // Array to store messages
-        const onlineUsers = {}; // Track online status
+        // Persistência usando localStorage
+        const loadStorage = (key) => JSON.parse(localStorage.getItem(key)) || [];
+        const saveStorage = (key, data) => localStorage.setItem(key, JSON.stringify(data));
+
+        let adminUsers = [{ username: 'admin1', password: 'admin123' }];
+        let users = loadStorage('users');
+        let messages = loadStorage('messages');
+        let onlineUsers = {};
 
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
-
             const username = document.getElementById('loginUsername').value;
             const password = document.getElementById('loginPassword').value;
-
             const admin = adminUsers.find(user => user.username === username && user.password === password);
             const user = users.find(user => user.username === username && user.password === password);
-
-            if (admin) {
+            
+            if (admin || user) {
                 onlineUsers[username] = true;
+                saveStorage('onlineUsers', onlineUsers);
                 updateUserStatus();
                 document.getElementById('loginForm').classList.add('d-none');
-                document.getElementById('adminMenu').classList.remove('d-none');
-                alert('Bem-vindo, administrador!');
-            } else if (user) {
-                onlineUsers[username] = true;
-                updateUserStatus();
-                document.getElementById('loginForm').classList.add('d-none');
-                document.getElementById('userView').classList.remove('d-none');
-                updateMessagesList(username);
-                alert('Bem-vindo, colaborador!');
+                admin ? document.getElementById('adminMenu').classList.remove('d-none') : document.getElementById('userView').classList.remove('d-none');
             } else {
-                alert('Usuário ou senha inválidos!');
+                const feedback = document.getElementById('loginFeedback');
+                feedback.textContent = 'Usuário ou senha inválidos!';
+                feedback.classList.remove('d-none');
             }
         });
 
         document.getElementById('showRegistration').addEventListener('click', function(e) {
             e.preventDefault();
-            document.getElementById('registrationForm').classList.remove('d-none');
-            document.getElementById('messageForm').classList.add('d-none');
-            document.getElementById('statusView').classList.add('d-none');
-            document.getElementById('allMessagesView').classList.add('d-none');
+            showSection('registrationForm');
         });
 
         document.getElementById('showMessages').addEventListener('click', function(e) {
             e.preventDefault();
-            document.getElementById('messageForm').classList.remove('d-none');
-            document.getElementById('registrationForm').classList.add('d-none');
-            document.getElementById('statusView').classList.add('d-none');
-            document.getElementById('allMessagesView').classList.add('d-none');
+            showSection('messageForm');
         });
 
         document.getElementById('showStatus').addEventListener('click', function(e) {
             e.preventDefault();
-            document.getElementById('statusView').classList.remove('d-none');
-            document.getElementById('registrationForm').classList.add('d-none');
-            document.getElementById('messageForm').classList.add('d-none');
-            document.getElementById('allMessagesView').classList.add('d-none');
+            showSection('statusView');
             updateUserStatus();
         });
 
         document.getElementById('showAllMessages').addEventListener('click', function(e) {
             e.preventDefault();
-            document.getElementById('allMessagesView').classList.remove('d-none');
-            document.getElementById('registrationForm').classList.add('d-none');
-            document.getElementById('messageForm').classList.add('d-none');
-            document.getElementById('statusView').classList.add('d-none');
+            showSection('allMessagesView');
             updateAllMessagesTable();
         });
 
+        function showSection(sectionId) {
+            const sections = ['registrationForm', 'messageForm', 'statusView', 'allMessagesView'];
+            sections.forEach(id => {
+                document.getElementById(id).classList.add('d-none');
+            });
+            document.getElementById(sectionId).classList.remove('d-none');
+        }
+
         document.getElementById('registrationForm').addEventListener('submit', function(e) {
             e.preventDefault();
-
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
 
-            if (users.find(user => user.username === username) || adminUsers.find(user => user.username === username)) {
-                alert('Usuário já registrado!');
+            if (users.find(user => user.username === username)) {
+                const feedback = document.getElementById('registrationFeedback');
+                feedback.textContent = 'Usuário já registrado!';
+                feedback.classList.remove('d-none');
                 return;
             }
 
             users.push({ username, password });
-            onlineUsers[username] = false;
-            const recipientSelect = document.getElementById('recipient');
-            const option = document.createElement('option');
-            option.value = username;
-            option.textContent = username;
-            recipientSelect.appendChild(option);
-
+            saveStorage('users', users);
             document.getElementById('registrationForm').reset();
             alert('Usuário registrado com sucesso!');
         });
 
         document.getElementById('messageForm').addEventListener('submit', function(e) {
             e.preventDefault();
-
             const recipient = document.getElementById('recipient').value;
             const message = document.getElementById('message').value;
             const timestamp = new Date().toLocaleString();
 
             messages.push({ recipient, message, timestamp });
-
+            saveStorage('messages', messages);
             updateMessagesList();
-
             document.getElementById('messageForm').reset();
         });
 
@@ -229,7 +218,7 @@
             const userStatusList = document.getElementById('userStatusList');
             userStatusList.innerHTML = '';
 
-            [...users, ...adminUsers].forEach(user => {
+            users.forEach(user => {
                 const statusItem = document.createElement('li');
                 statusItem.className = 'list-group-item';
                 const status = onlineUsers[user.username] ? 'Conectado' : 'Desconectado';
