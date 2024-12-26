@@ -4,73 +4,32 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login e Painel Administrativo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
-            background-color: #f4f6f9;
-            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
         }
 
         .container {
-            max-width: 900px;
+            max-width: 800px;
             margin: auto;
             padding-top: 50px;
         }
 
-        form {
-            width: 100%;
-            background-color: #fff;
-            padding: 20px;
+        .card {
+            margin-top: 20px;
             border-radius: 10px;
             box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
         }
 
         .btn {
-            padding: 10px;
-            background-color: #007bff;
-            color: white;
-            border: none;
             border-radius: 5px;
-            width: 100%;
-            cursor: pointer;
-        }
-
-        .btn:hover {
-            background-color: #0056b3;
-        }
-
-        .btn-secondary {
-            background-color: #6c757d;
-        }
-
-        .btn-danger {
-            background-color: #dc3545;
-        }
-
-        .text-center {
-            text-align: center;
-        }
-
-        #loginFeedback {
-            color: red;
-        }
-
-        .d-none {
-            display: none;
-        }
-
-        #adminMenu, #userView {
-            display: none;
-        }
-
-        #adminMessages {
-            margin-top: 20px;
-        }
-
-        #userMessages {
-            margin-top: 20px;
         }
 
         .message {
+            padding: 10px;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
             margin-bottom: 10px;
         }
     </style>
@@ -79,89 +38,90 @@
 
 <div class="container">
     <!-- Formulário de Login -->
-    <div id="loginForm">
+    <div id="loginForm" class="card p-4">
         <h2 class="text-center">Login</h2>
-        <div id="loginFeedback" class="text-center d-none"></div>
+        <div id="loginFeedback" class="text-center text-danger d-none"></div>
         <form>
-            <input type="text" id="loginUsername" placeholder="Nome de Usuário" required><br><br>
-            <input type="password" id="loginPassword" placeholder="Senha" required><br><br>
-            <button type="submit" class="btn">Entrar</button>
+            <div class="mb-3">
+                <input type="text" id="loginUsername" class="form-control" placeholder="Nome de Usuário" required>
+            </div>
+            <div class="mb-3">
+                <input type="password" id="loginPassword" class="form-control" placeholder="Senha" required>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Entrar</button>
         </form>
     </div>
 
     <!-- Menu Administrativo -->
-    <div id="adminMenu" class="d-none">
+    <div id="adminMenu" class="card p-4 d-none">
         <h2 class="text-center">Painel Administrativo</h2>
-        <div id="adminMessages">
-            <h4>Recados Enviados</h4>
-            <!-- Recados serão listados aqui -->
-        </div>
-        <form id="messageForm">
-            <h4>Enviar Recado</h4>
-            <textarea id="messageText" rows="4" placeholder="Digite seu recado..." required></textarea><br><br>
-            <button type="submit" class="btn">Enviar</button>
-        </form>
-        <button id="logoutAdmin" class="btn btn-danger">Sair</button>
-    </div>
 
-    <!-- Visão do Usuário Comum -->
-    <div id="userView" class="d-none">
-        <h2 class="text-center">Bem-vindo, Usuário</h2>
-        <div id="userMessages">
-            <h4>Recados</h4>
-            <!-- Recados serão listados aqui -->
+        <nav class="nav nav-tabs">
+            <a class="nav-link active" id="tab-users" href="#users" data-bs-toggle="tab">Usuários</a>
+            <a class="nav-link" id="tab-messages" href="#messages" data-bs-toggle="tab">Recados</a>
+            <a class="nav-link" id="tab-logout" href="#logout" data-bs-toggle="tab">Sair</a>
+        </nav>
+
+        <div class="tab-content mt-4">
+            <!-- Gerenciamento de Usuários -->
+            <div class="tab-pane fade show active" id="users">
+                <h4>Registrar Usuário</h4>
+                <form id="registerUserForm">
+                    <div class="mb-3">
+                        <input type="text" id="registerUsername" class="form-control" placeholder="Nome de Usuário" required>
+                    </div>
+                    <div class="mb-3">
+                        <input type="password" id="registerPassword" class="form-control" placeholder="Senha" required>
+                    </div>
+                    <button type="submit" class="btn btn-success w-100">Registrar</button>
+                </form>
+
+                <h4 class="mt-4">Lista de Usuários Logados</h4>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Ação</th>
+                        </tr>
+                    </thead>
+                    <tbody id="loggedUsersTable">
+                        <!-- Usuários logados serão listados aqui -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Gerenciamento de Recados -->
+            <div class="tab-pane fade" id="messages">
+                <h4>Todos os Recados</h4>
+                <div id="adminMessages" class="mt-3">
+                    <!-- Lista de recados -->
+                </div>
+
+                <form id="messageForm" class="mt-4">
+                    <textarea id="messageText" class="form-control" rows="4" placeholder="Digite seu recado..." required></textarea>
+                    <button type="submit" class="btn btn-primary w-100 mt-3">Enviar</button>
+                </form>
+            </div>
+
+            <!-- Logout -->
+            <div class="tab-pane fade" id="logout">
+                <button id="logoutAdmin" class="btn btn-danger w-100">Sair</button>
+            </div>
         </div>
-        <button id="logoutUser" class="btn btn-danger">Sair</button>
     </div>
 </div>
 
 <script>
-    // Usuário administrador padrão
     const defaultAdmin = { username: 'admin', password: 'admin123', admin: true };
 
-    // Carrega usuários e mensagens do localStorage
     let users = JSON.parse(localStorage.getItem('users')) || [];
     let messages = JSON.parse(localStorage.getItem('messages')) || [];
 
-    // Adiciona o administrador ao localStorage, se não existir
     if (!users.some(user => user.username === defaultAdmin.username)) {
         users.push(defaultAdmin);
         localStorage.setItem('users', JSON.stringify(users));
     }
 
-    // Função para carregar mensagens na visão do administrador
-    function loadAdminMessages() {
-        const adminMessages = document.getElementById('adminMessages');
-        adminMessages.innerHTML = '';
-        if (messages.length > 0) {
-            messages.forEach((msg) => {
-                const messageElement = document.createElement('p');
-                messageElement.classList.add('message');
-                messageElement.textContent = `${msg.sender}: ${msg.text} - Enviado em ${msg.timestamp}`;
-                adminMessages.appendChild(messageElement);
-            });
-        } else {
-            adminMessages.innerHTML = '<p class="text-muted">Não há recados disponíveis.</p>';
-        }
-    }
-
-    // Função para carregar mensagens na visão do usuário comum
-    function loadUserMessages() {
-        const userMessages = document.getElementById('userMessages');
-        userMessages.innerHTML = '';
-        if (messages.length > 0) {
-            messages.forEach((msg) => {
-                const messageElement = document.createElement('p');
-                messageElement.classList.add('message');
-                messageElement.textContent = `${msg.sender}: ${msg.text} - Enviado em ${msg.timestamp}`;
-                userMessages.appendChild(messageElement);
-            });
-        } else {
-            userMessages.innerHTML = '<p class="text-muted">Não há recados disponíveis.</p>';
-        }
-    }
-
-    // Função de login
     document.querySelector('#loginForm form').addEventListener('submit', function (e) {
         e.preventDefault();
 
@@ -171,16 +131,12 @@
         const user = users.find(u => u.username === username && u.password === password);
 
         if (user) {
-            localStorage.setItem('loggedInUser', JSON.stringify(user)); // Salva usuário logado
+            localStorage.setItem('loggedInUser', JSON.stringify(user));
 
             if (user.admin) {
-                document.getElementById('loginForm').style.display = 'none';
-                document.getElementById('adminMenu').style.display = 'block';
-                loadAdminMessages();
-            } else {
-                document.getElementById('loginForm').style.display = 'none';
-                document.getElementById('userView').style.display = 'block';
-                loadUserMessages();
+                document.getElementById('loginForm').classList.add('d-none');
+                document.getElementById('adminMenu').classList.remove('d-none');
+                loadAdminData();
             }
         } else {
             const feedback = document.getElementById('loginFeedback');
@@ -189,40 +145,68 @@
         }
     });
 
-    // Função de logout para o administrador
+    function loadAdminData() {
+        loadAdminMessages();
+        loadLoggedUsers();
+    }
+
+    function loadAdminMessages() {
+        const adminMessages = document.getElementById('adminMessages');
+        adminMessages.innerHTML = '';
+        if (messages.length > 0) {
+            messages.forEach(msg => {
+                const messageElement = document.createElement('div');
+                messageElement.classList.add('message');
+                messageElement.textContent = `${msg.sender}: ${msg.text} - ${msg.timestamp}`;
+                adminMessages.appendChild(messageElement);
+            });
+        } else {
+            adminMessages.innerHTML = '<p class="text-muted">Nenhum recado disponível.</p>';
+        }
+    }
+
+    function loadLoggedUsers() {
+        const loggedUsersTable = document.getElementById('loggedUsersTable');
+        loggedUsersTable.innerHTML = '';
+
+        const loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'));
+
+        if (loggedInUser) {
+            const row = document.createElement('tr');
+            row.innerHTML = `<td>${loggedInUser.username}</td><td><button class='btn btn-danger btn-sm removeUser'>Remover</button></td>`;
+            loggedUsersTable.appendChild(row);
+        }
+    }
+
+    document.getElementById('registerUserForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const username = document.getElementById('registerUsername').value;
+        const password = document.getElementById('registerPassword').value;
+
+        if (username && password) {
+            users.push({ username, password, admin: false });
+            localStorage.setItem('users', JSON.stringify(users));
+            alert('Usuário registrado com sucesso!');
+        }
+    });
+
     document.getElementById('logoutAdmin').addEventListener('click', function () {
         localStorage.removeItem('loggedInUser');
-        document.getElementById('adminMenu').style.display = 'none';
-        document.getElementById('loginForm').style.display = 'block';
+        document.getElementById('adminMenu').classList.add('d-none');
+        document.getElementById('loginForm').classList.remove('d-none');
     });
 
-    // Função de logout para o usuário comum
-    document.getElementById('logoutUser').addEventListener('click', function () {
-        localStorage.removeItem('loggedInUser');
-        document.getElementById('userView').style.display = 'none';
-        document.getElementById('loginForm').style.display = 'block';
-    });
-
-    // Função para enviar recado como administrador
     document.getElementById('messageForm').addEventListener('submit', function (e) {
         e.preventDefault();
 
         const messageText = document.getElementById('messageText').value;
-        const newMessage = {
-            sender: 'Admin',
-            text: messageText,
-            timestamp: new Date().toLocaleString()
-        };
-
-        messages.push(newMessage);
-        localStorage.setItem('messages', JSON.stringify(messages)); // Atualiza as mensagens no localStorage
-
+        messages.push({ sender: 'Admin', text: messageText, timestamp: new Date().toLocaleString() });
+        localStorage.setItem('messages', JSON.stringify(messages));
         loadAdminMessages();
-        loadUserMessages();
-
-        document.getElementById('messageText').value = ''; // Limpa o campo
     });
 </script>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
