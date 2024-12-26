@@ -37,19 +37,39 @@
 <body>
 
 <div class="container">
-    <!-- Formulário de Login -->
-    <div id="loginForm" class="card p-4">
+    <!-- Formulário de Login e Registro -->
+    <div id="authForm" class="card p-4">
         <h2 class="text-center">Login</h2>
-        <div id="loginFeedback" class="text-center text-danger d-none"></div>
-        <form>
+        <div id="authFeedback" class="text-center text-danger d-none"></div>
+        <form id="loginForm">
             <div class="mb-3">
-                <input type="text" id="loginUsername" class="form-control" placeholder="Nome de Usuário" required>
+                <input type="text" id="authUsername" class="form-control" placeholder="Nome de Usuário" required>
             </div>
             <div class="mb-3">
-                <input type="password" id="loginPassword" class="form-control" placeholder="Senha" required>
+                <input type="password" id="authPassword" class="form-control" placeholder="Senha" required>
             </div>
             <button type="submit" class="btn btn-primary w-100">Entrar</button>
         </form>
+        <div class="mt-3 text-center">
+            <button id="toggleRegister" class="btn btn-link">Registrar-se</button>
+        </div>
+    </div>
+
+    <!-- Formulário de Registro -->
+    <div id="registerForm" class="card p-4 d-none">
+        <h2 class="text-center">Registrar</h2>
+        <form id="registerUserForm">
+            <div class="mb-3">
+                <input type="text" id="registerUsername" class="form-control" placeholder="Nome de Usuário" required>
+            </div>
+            <div class="mb-3">
+                <input type="password" id="registerPassword" class="form-control" placeholder="Senha" required>
+            </div>
+            <button type="submit" class="btn btn-success w-100">Registrar</button>
+        </form>
+        <div class="mt-3 text-center">
+            <button id="toggleLogin" class="btn btn-link">Já tenho uma conta</button>
+        </div>
     </div>
 
     <!-- Menu Administrativo -->
@@ -65,17 +85,6 @@
         <div class="tab-content mt-4">
             <!-- Gerenciamento de Usuários -->
             <div class="tab-pane fade show active" id="users">
-                <h4>Registrar Usuário</h4>
-                <form id="registerUserForm">
-                    <div class="mb-3">
-                        <input type="text" id="registerUsername" class="form-control" placeholder="Nome de Usuário" required>
-                    </div>
-                    <div class="mb-3">
-                        <input type="password" id="registerPassword" class="form-control" placeholder="Senha" required>
-                    </div>
-                    <button type="submit" class="btn btn-success w-100">Registrar</button>
-                </form>
-
                 <h4 class="mt-4">Lista de Usuários Logados</h4>
                 <table class="table table-bordered">
                     <thead>
@@ -109,6 +118,16 @@
             </div>
         </div>
     </div>
+
+    <!-- Painel do Usuário -->
+    <div id="userPanel" class="card p-4 d-none">
+        <h2 class="text-center">Bem-vindo!</h2>
+        <div id="userMessages" class="mt-4">
+            <h4>Recados</h4>
+            <!-- Lista de recados -->
+        </div>
+        <button id="logoutUser" class="btn btn-danger w-100 mt-4">Sair</button>
+    </div>
 </div>
 
 <script>
@@ -122,11 +141,11 @@
         localStorage.setItem('users', JSON.stringify(users));
     }
 
-    document.querySelector('#loginForm form').addEventListener('submit', function (e) {
+    document.querySelector('#loginForm').addEventListener('submit', function (e) {
         e.preventDefault();
 
-        const username = document.getElementById('loginUsername').value;
-        const password = document.getElementById('loginPassword').value;
+        const username = document.getElementById('authUsername').value;
+        const password = document.getElementById('authPassword').value;
 
         const user = users.find(u => u.username === username && u.password === password);
 
@@ -134,15 +153,44 @@
             localStorage.setItem('loggedInUser', JSON.stringify(user));
 
             if (user.admin) {
-                document.getElementById('loginForm').classList.add('d-none');
+                document.getElementById('authForm').classList.add('d-none');
                 document.getElementById('adminMenu').classList.remove('d-none');
                 loadAdminData();
+            } else {
+                document.getElementById('authForm').classList.add('d-none');
+                document.getElementById('userPanel').classList.remove('d-none');
+                loadUserMessages();
             }
         } else {
-            const feedback = document.getElementById('loginFeedback');
+            const feedback = document.getElementById('authFeedback');
             feedback.textContent = 'Usuário ou senha inválidos!';
             feedback.classList.remove('d-none');
         }
+    });
+
+    document.querySelector('#registerUserForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const username = document.getElementById('registerUsername').value;
+        const password = document.getElementById('registerPassword').value;
+
+        if (username && password) {
+            users.push({ username, password, admin: false });
+            localStorage.setItem('users', JSON.stringify(users));
+            alert('Usuário registrado com sucesso!');
+            document.getElementById('registerForm').classList.add('d-none');
+            document.getElementById('authForm').classList.remove('d-none');
+        }
+    });
+
+    document.querySelector('#toggleRegister').addEventListener('click', function () {
+        document.getElementById('authForm').classList.add('d-none');
+        document.getElementById('registerForm').classList.remove('d-none');
+    });
+
+    document.querySelector('#toggleLogin').addEventListener('click', function () {
+        document.getElementById('registerForm').classList.add('d-none');
+        document.getElementById('authForm').classList.remove('d-none');
     });
 
     function loadAdminData() {
@@ -165,6 +213,21 @@
         }
     }
 
+    function loadUserMessages() {
+        const userMessages = document.getElementById('userMessages');
+        userMessages.innerHTML = '';
+        if (messages.length > 0) {
+            messages.forEach(msg => {
+                const messageElement = document.createElement('div');
+                messageElement.classList.add('message');
+                messageElement.textContent = `${msg.sender}: ${msg.text} - ${msg.timestamp}`;
+                userMessages.appendChild(messageElement);
+            });
+        } else {
+            userMessages.innerHTML = '<p class="text-muted">Nenhum recado disponível.</p>';
+        }
+    }
+
     function loadLoggedUsers() {
         const loggedUsersTable = document.getElementById('loggedUsersTable');
         loggedUsersTable.innerHTML = '';
@@ -178,35 +241,60 @@
         }
     }
 
-    document.getElementById('registerUserForm').addEventListener('submit', function (e) {
-        e.preventDefault();
-
-        const username = document.getElementById('registerUsername').value;
-        const password = document.getElementById('registerPassword').value;
-
-        if (username && password) {
-            users.push({ username, password, admin: false });
-            localStorage.setItem('users', JSON.stringify(users));
-            alert('Usuário registrado com sucesso!');
-        }
-    });
-
     document.getElementById('logoutAdmin').addEventListener('click', function () {
         localStorage.removeItem('loggedInUser');
         document.getElementById('adminMenu').classList.add('d-none');
-        document.getElementById('loginForm').classList.remove('d-none');
+        document.getElementById('authForm').classList.remove('d-none');
+    });
+
+    document.getElementById('logoutUser').addEventListener('click', function () {
+        localStorage.removeItem('loggedInUser');
+        document.getElementById('userPanel').classList.add('d-none');
+        document.getElementById('authForm').classList.remove('d-none');
     });
 
     document.getElementById('messageForm').addEventListener('submit', function (e) {
         e.preventDefault();
 
         const messageText = document.getElementById('messageText').value;
-        messages.push({ sender: 'Admin', text: messageText, timestamp: new Date().toLocaleString() });
-        localStorage.setItem('messages', JSON.stringify(messages));
-        loadAdminMessages();
+        if (messageText) {
+            const loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'));
+            const newMessage = {
+                sender: loggedInUser.username,
+                text: messageText,
+                timestamp: new Date().toLocaleString()
+            };
+
+            messages.push(newMessage);
+            localStorage.setItem('messages', JSON.stringify(messages));
+
+            loadAdminMessages();
+            loadUserMessages();
+
+            document.getElementById('messageText').value = '';
+        }
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'));
+
+        if (loggedInUser) {
+            if (loggedInUser.admin) {
+                document.getElementById('authForm').classList.add('d-none');
+                document.getElementById('adminMenu').classList.remove('d-none');
+                loadAdminData();
+            } else {
+                document.getElementById('authForm').classList.add('d-none');
+                document.getElementById('userPanel').classList.remove('d-none');
+                loadUserMessages();
+            }
+        } else {
+            document.getElementById('authForm').classList.remove('d-none');
+        }
     });
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+
