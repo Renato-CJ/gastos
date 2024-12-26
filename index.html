@@ -85,6 +85,19 @@
         <div class="tab-content mt-4">
             <!-- Gerenciamento de Usuários -->
             <div class="tab-pane fade show active" id="users">
+                <h4 class="mt-4">Usuários Pendentes</h4>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="pendingUsersTable">
+                        <!-- Usuários pendentes serão listados aqui -->
+                    </tbody>
+                </table>
+
                 <h4 class="mt-4">Lista de Usuários Logados</h4>
                 <table class="table table-bordered">
                     <thead>
@@ -147,7 +160,7 @@
         const username = document.getElementById('authUsername').value;
         const password = document.getElementById('authPassword').value;
 
-        const user = users.find(u => u.username === username && u.password === password);
+        const user = users.find(u => u.username === username && u.password === password && u.approved !== false);
 
         if (user) {
             localStorage.setItem('loggedInUser', JSON.stringify(user));
@@ -163,7 +176,7 @@
             }
         } else {
             const feedback = document.getElementById('authFeedback');
-            feedback.textContent = 'Usuário ou senha inválidos!';
+            feedback.textContent = 'Usuário ou senha inválidos ou aguardando aprovação!';
             feedback.classList.remove('d-none');
         }
     });
@@ -175,9 +188,9 @@
         const password = document.getElementById('registerPassword').value;
 
         if (username && password) {
-            users.push({ username, password, admin: false });
+            users.push({ username, password, admin: false, approved: false });
             localStorage.setItem('users', JSON.stringify(users));
-            alert('Usuário registrado com sucesso!');
+            alert('Registro realizado com sucesso! Aguarde aprovação.');
             document.getElementById('registerForm').classList.add('d-none');
             document.getElementById('authForm').classList.remove('d-none');
         }
@@ -196,6 +209,7 @@
     function loadAdminData() {
         loadAdminMessages();
         loadLoggedUsers();
+        loadPendingUsers();
     }
 
     function loadAdminMessages() {
@@ -241,6 +255,39 @@
         }
     }
 
+    function loadPendingUsers() {
+        const pendingUsersTable = document.getElementById('pendingUsersTable');
+        pendingUsersTable.innerHTML = '';
+
+        const pendingUsers = users.filter(user => user.approved === false);
+
+        if (pendingUsers.length > 0) {
+            pendingUsers.forEach(user => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${user.username}</td>
+                    <td>
+                        <button class='btn btn-success btn-sm approveUser'>Aprovar</button>
+                        <button class='btn btn-danger btn-sm rejectUser'>Rejeitar</button>
+                    </td>
+                `;
+                row.querySelector('.approveUser').addEventListener('click', function () {
+                    user.approved = true;
+                    localStorage.setItem('users', JSON.stringify(users));
+                    loadPendingUsers();
+                });
+                row.querySelector('.rejectUser').addEventListener('click', function () {
+                    users = users.filter(u => u !== user);
+                    localStorage.setItem('users', JSON.stringify(users));
+                    loadPendingUsers();
+                });
+                pendingUsersTable.appendChild(row);
+            });
+        } else {
+            pendingUsersTable.innerHTML = '<tr><td colspan="2" class="text-muted text-center">Nenhum usuário pendente.</td></tr>';
+        }
+    }
+
     document.getElementById('logoutAdmin').addEventListener('click', function () {
         localStorage.removeItem('loggedInUser');
         document.getElementById('adminMenu').classList.add('d-none');
@@ -257,60 +304,17 @@
         e.preventDefault();
 
         const messageText = document.getElementById('messageText').value;
-        if (messageText) {
-            const loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'));
-            const newMessage = {
-                sender: loggedInUser.username,
-                text: messageText,
-                timestamp: new Date().toLocaleString()
-            };
-
-            messages.push(newMessage);
-            localStorage.setItem('messages', JSON.stringify(messages));
-
-            loadAdminMessages();
-            loadUserMessages();
-
-            document.getElementById('messageText').value = '';
-        }
-    });
-
-    function loadLoggedUsers() {
-        const loggedUsersTable = document.getElementById('loggedUsersTable');
-        loggedUsersTable.innerHTML = '';
-
-        const loggedInUsers = JSON.parse(localStorage.getItem('users')) || [];
-        const loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'));
-
-        loggedInUsers.forEach(user => {
-            const isUserLoggedIn = loggedInUser && loggedInUser.username === user.username;
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${user.username}</td>
-                <td>${isUserLoggedIn ? 'Logado' : 'Offline'}</td>
-            `;
-            loggedUsersTable.appendChild(row);
-        });
-    }
-
-    document.addEventListener('DOMContentLoaded', function () {
         const loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'));
 
         if (loggedInUser) {
-            if (loggedInUser.admin) {
-                document.getElementById('authForm').classList.add('d-none');
-                document.getElementById('adminMenu').classList.remove('d-none');
-                loadAdminData();
-            } else {
-                document.getElementById('authForm').classList.add('d-none');
-                document.getElementById('userPanel').classList.remove('d-none');
-                loadUserMessages();
-            }
-        } else {
-            document.getElementById('authForm').classList.remove('d-none');
+            messages.push({ text: messageText, sender: loggedInUser.username, timestamp: new Date().toLocaleString() });
+            localStorage.setItem('messages', JSON.stringify(messages));
+            loadAdminMessages();
+            loadUserMessages();
+            document.getElementById('messageText').value = '';
         }
     });
 </script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
 </html>
