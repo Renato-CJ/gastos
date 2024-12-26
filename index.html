@@ -3,50 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login e Painel Administrativo</title>
+    <title>Plataforma de Gestão de Recados</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
             background-color: #f8f9fa;
         }
-
         .container {
             max-width: 800px;
             margin: auto;
             padding-top: 50px;
         }
-
         .card {
             margin-top: 20px;
             border-radius: 10px;
             box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
         }
-
         .btn {
             border-radius: 5px;
         }
-
         .message {
             padding: 10px;
             border: 1px solid #dee2e6;
             border-radius: 5px;
             margin-bottom: 10px;
         }
+        .emoji-btn {
+            margin: 5px;
+            cursor: pointer;
+        }
+        .modal-content {
+            width: 90%;
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <!-- Formulário de Login e Registro -->
-    <div id="authForm" class="card p-4">
+    <!-- Tela de Login -->
+    <div id="loginScreen" class="card p-4">
         <h2 class="text-center">Login</h2>
-        <div id="authFeedback" class="text-center text-danger d-none"></div>
+        <div id="loginFeedback" class="text-center text-danger d-none"></div>
         <form id="loginForm">
             <div class="mb-3">
-                <input type="text" id="authUsername" class="form-control" placeholder="Nome de Usuário" required>
+                <input type="text" id="loginID" class="form-control" placeholder="ID" required>
             </div>
             <div class="mb-3">
-                <input type="password" id="authPassword" class="form-control" placeholder="Senha" required>
+                <input type="password" id="loginPassword" class="form-control" placeholder="Senha" required>
             </div>
             <button type="submit" class="btn btn-primary w-100">Entrar</button>
         </form>
@@ -55,12 +58,12 @@
         </div>
     </div>
 
-    <!-- Formulário de Registro -->
-    <div id="registerForm" class="card p-4 d-none">
+    <!-- Tela de Cadastro -->
+    <div id="registerScreen" class="card p-4 d-none">
         <h2 class="text-center">Registrar</h2>
-        <form id="registerUserForm">
+        <form id="registerForm">
             <div class="mb-3">
-                <input type="text" id="registerUsername" class="form-control" placeholder="Nome de Usuário" required>
+                <input type="text" id="registerID" class="form-control" placeholder="ID" required>
             </div>
             <div class="mb-3">
                 <input type="password" id="registerPassword" class="form-control" placeholder="Senha" required>
@@ -72,259 +75,214 @@
         </div>
     </div>
 
-    <!-- Menu Administrativo -->
-    <div id="adminMenu" class="card p-4 d-none">
+    <!-- Painel Administrativo -->
+    <div id="adminPanel" class="card p-4 d-none">
         <h2 class="text-center">Painel Administrativo</h2>
+        <button id="logoutAdmin" class="btn btn-danger w-100">Sair</button>
+        <div id="adminActions">
+            <h4>Gerenciamento de Recados</h4>
+            <button id="addMessage" class="btn btn-success w-100">Enviar Recado</button>
+            <div id="adminMessageList"></div>
 
-        <nav class="nav nav-tabs">
-            <a class="nav-link active" id="tab-users" href="#users" data-bs-toggle="tab">Usuários</a>
-            <a class="nav-link" id="tab-messages" href="#messages" data-bs-toggle="tab">Recados</a>
-            <a class="nav-link" id="tab-logout" href="#logout" data-bs-toggle="tab">Sair</a>
-        </nav>
-
-        <div class="tab-content mt-4">
-            <!-- Gerenciamento de Usuários -->
-            <div class="tab-pane fade show active" id="users">
-                <h4 class="mt-4">Usuários Pendentes</h4>
-                <table class="table table-bordered">
-                    <thead>
-                        <tr>
-                            <th>Nome</th>
-                            <th>Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody id="pendingUsersTable">
-                        <!-- Usuários pendentes serão listados aqui -->
-                    </tbody>
-                </table>
-
-                <h4 class="mt-4">Lista de Usuários Logados</h4>
-                <table class="table table-bordered">
-                    <thead>
-                        <tr>
-                            <th>Nome</th>
-                            <th>Ação</th>
-                        </tr>
-                    </thead>
-                    <tbody id="loggedUsersTable">
-                        <!-- Usuários logados serão listados aqui -->
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- Gerenciamento de Recados -->
-            <div class="tab-pane fade" id="messages">
-                <h4>Todos os Recados</h4>
-                <div id="adminMessages" class="mt-3">
-                    <!-- Lista de recados -->
-                </div>
-
-                <form id="messageForm" class="mt-4">
-                    <textarea id="messageText" class="form-control" rows="4" placeholder="Digite seu recado..." required></textarea>
-                    <button type="submit" class="btn btn-primary w-100 mt-3">Enviar</button>
-                </form>
-            </div>
-
-            <!-- Logout -->
-            <div class="tab-pane fade" id="logout">
-                <button id="logoutAdmin" class="btn btn-danger w-100">Sair</button>
-            </div>
+            <h4 class="mt-4">Gerenciamento de Usuários</h4>
+            <button id="viewLoggedUsers" class="btn btn-info w-100">Visualizar Usuários Logados</button>
+            <div id="loggedUsersList"></div>
+        </div>
+        <div id="modalMessageForm" class="d-none">
+            <textarea id="newMessageText" class="form-control" rows="3" placeholder="Escreva o recado"></textarea>
+            <button id="submitNewMessage" class="btn btn-primary w-100 mt-2">Enviar</button>
         </div>
     </div>
 
-    <!-- Painel do Usuário -->
+    <!-- Painel de Usuário Comum -->
     <div id="userPanel" class="card p-4 d-none">
         <h2 class="text-center">Bem-vindo!</h2>
-        <div id="userMessages" class="mt-4">
+        <div id="userMessages">
             <h4>Recados</h4>
             <!-- Lista de recados -->
         </div>
         <button id="logoutUser" class="btn btn-danger w-100 mt-4">Sair</button>
     </div>
+
+    <!-- Modal para visualização de recados -->
+    <div class="modal fade" id="messagesModal" tabindex="-1" aria-labelledby="messagesModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="messagesModalLabel">Recados Enviados</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="modalMessagesList">
+                    <!-- Recados listados aqui -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
-    const defaultAdmin = { username: 'admin', password: 'admin123', admin: true };
-
     let users = JSON.parse(localStorage.getItem('users')) || [];
     let messages = JSON.parse(localStorage.getItem('messages')) || [];
-
-    // Adicionando o usuário admin caso ainda não exista
-    if (!users.some(user => user.username === defaultAdmin.username)) {
+    const defaultAdmin = { id: 'admin', password: 'admin123', isAdmin: true };
+    
+    if (!users.some(user => user.id === defaultAdmin.id)) {
         users.push(defaultAdmin);
         localStorage.setItem('users', JSON.stringify(users));
     }
 
-    document.querySelector('#loginForm').addEventListener('submit', function (e) {
+    // Função para alternar entre telas de login e cadastro
+    document.getElementById('toggleRegister').addEventListener('click', function () {
+        document.getElementById('loginScreen').classList.add('d-none');
+        document.getElementById('registerScreen').classList.remove('d-none');
+    });
+
+    document.getElementById('toggleLogin').addEventListener('click', function () {
+        document.getElementById('registerScreen').classList.add('d-none');
+        document.getElementById('loginScreen').classList.remove('d-none');
+    });
+
+    // Login
+    document.getElementById('loginForm').addEventListener('submit', function (e) {
         e.preventDefault();
-
-        const username = document.getElementById('authUsername').value;
-        const password = document.getElementById('authPassword').value;
-
-        const user = users.find(u => u.username === username && u.password === password && u.approved !== false);
-
-        // Caso o usuário não esteja aprovado
-        if (user && user.approved === false) {
-            const feedback = document.getElementById('authFeedback');
-            feedback.textContent = 'Aguarde a aprovação da sua conta.';
-            feedback.classList.remove('d-none');
-            return;
-        }
+        const id = document.getElementById('loginID').value;
+        const password = document.getElementById('loginPassword').value;
+        const user = users.find(u => u.id === id && u.password === password);
 
         if (user) {
             localStorage.setItem('loggedInUser', JSON.stringify(user));
-
-            if (user.admin) {
-                document.getElementById('authForm').classList.add('d-none');
-                document.getElementById('adminMenu').classList.remove('d-none');
-                loadAdminData();
+            if (user.isAdmin) {
+                document.getElementById('loginScreen').classList.add('d-none');
+                document.getElementById('adminPanel').classList.remove('d-none');
+                loadAdminMessages();
             } else {
-                document.getElementById('authForm').classList.add('d-none');
+                document.getElementById('loginScreen').classList.add('d-none');
                 document.getElementById('userPanel').classList.remove('d-none');
                 loadUserMessages();
             }
         } else {
-            const feedback = document.getElementById('authFeedback');
-            feedback.textContent = 'Usuário ou senha inválidos ou aguardando aprovação!';
-            feedback.classList.remove('d-none');
+            document.getElementById('loginFeedback').textContent = 'ID ou senha incorretos!';
+            document.getElementById('loginFeedback').classList.remove('d-none');
         }
     });
 
-    document.querySelector('#registerUserForm').addEventListener('submit', function (e) {
+    // Cadastro
+    document.getElementById('registerForm').addEventListener('submit', function (e) {
         e.preventDefault();
-
-        const username = document.getElementById('registerUsername').value;
+        const id = document.getElementById('registerID').value;
         const password = document.getElementById('registerPassword').value;
 
-        if (username && password) {
-            users.push({ username, password, admin: false, approved: false });
+        if (id && password) {
+            users.push({ id, password, isAdmin: false });
             localStorage.setItem('users', JSON.stringify(users));
-            alert('Registro realizado com sucesso! Aguarde aprovação.');
-            document.getElementById('registerForm').classList.add('d-none');
-            document.getElementById('authForm').classList.remove('d-none');
-            loadPendingUsers(); // Atualiza a lista de usuários pendentes
+            alert('Cadastro realizado com sucesso!');
+            document.getElementById('registerScreen').classList.add('d-none');
+            document.getElementById('loginScreen').classList.remove('d-none');
         }
     });
 
-    document.querySelector('#toggleRegister').addEventListener('click', function () {
-        document.getElementById('authForm').classList.add('d-none');
-        document.getElementById('registerForm').classList.remove('d-none');
-    });
-
-    document.querySelector('#toggleLogin').addEventListener('click', function () {
-        document.getElementById('registerForm').classList.add('d-none');
-        document.getElementById('authForm').classList.remove('d-none');
-    });
-
-    function loadAdminData() {
-        loadAdminMessages();
-        loadLoggedUsers();
-        loadPendingUsers();
-    }
-
-    function loadAdminMessages() {
-        const adminMessages = document.getElementById('adminMessages');
-        adminMessages.innerHTML = '';
-        if (messages.length > 0) {
-            messages.forEach(msg => {
-                const messageElement = document.createElement('div');
-                messageElement.classList.add('message');
-                messageElement.textContent = `${msg.sender}: ${msg.text} - ${new Date(msg.timestamp).toLocaleString('pt-BR')}`;
-                adminMessages.appendChild(messageElement);
-            });
-        } else {
-            adminMessages.innerHTML = '<p class="text-muted">Nenhum recado disponível.</p>';
-        }
-    }
-
-    function loadUserMessages() {
-        const userMessages = document.getElementById('userMessages');
-        userMessages.innerHTML = '';
-        if (messages.length > 0) {
-            messages.forEach(msg => {
-                const messageElement = document.createElement('div');
-                messageElement.classList.add('message');
-                messageElement.textContent = `${msg.sender}: ${msg.text} - ${new Date(msg.timestamp).toLocaleString('pt-BR')}`;
-                userMessages.appendChild(messageElement);
-            });
-        } else {
-            userMessages.innerHTML = '<p class="text-muted">Nenhum recado disponível.</p>';
-        }
-    }
-
-    function loadLoggedUsers() {
-        const loggedUsersTable = document.getElementById('loggedUsersTable');
-        loggedUsersTable.innerHTML = '';
-
-        const loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'));
-
-        if (loggedInUser) {
-            const row = document.createElement('tr');
-            row.innerHTML = `<td>${loggedInUser.username}</td><td><button class='btn btn-danger btn-sm removeUser'>Remover</button></td>`;
-            loggedUsersTable.appendChild(row);
-        }
-    }
-
-    function loadPendingUsers() {
-        const pendingUsersTable = document.getElementById('pendingUsersTable');
-        pendingUsersTable.innerHTML = '';
-
-        const pendingUsers = users.filter(user => user.approved === false);
-
-        if (pendingUsers.length > 0) {
-            pendingUsers.forEach(user => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${user.username}</td>
-                    <td>
-                        <button class='btn btn-success btn-sm approveUser'>Aprovar</button>
-                        <button class='btn btn-danger btn-sm rejectUser'>Rejeitar</button>
-                    </td>
-                `;
-                row.querySelector('.approveUser').addEventListener('click', function () {
-                    user.approved = true;
-                    localStorage.setItem('users', JSON.stringify(users));
-                    loadPendingUsers();
-                });
-                row.querySelector('.rejectUser').addEventListener('click', function () {
-                    users = users.filter(u => u.username !== user.username);
-                    localStorage.setItem('users', JSON.stringify(users));
-                    loadPendingUsers();
-                });
-                pendingUsersTable.appendChild(row);
-            });
-        } else {
-            pendingUsersTable.innerHTML = '<tr><td colspan="2" class="text-muted text-center">Nenhum usuário pendente.</td></tr>';
-        }
-    }
-
-    document.getElementById('logoutAdmin').addEventListener('click', function () {
-        localStorage.removeItem('loggedInUser');
-        document.getElementById('adminMenu').classList.add('d-none');
-        document.getElementById('authForm').classList.remove('d-none');
-    });
-
+    // Logout
     document.getElementById('logoutUser').addEventListener('click', function () {
         localStorage.removeItem('loggedInUser');
         document.getElementById('userPanel').classList.add('d-none');
-        document.getElementById('authForm').classList.remove('d-none');
+        document.getElementById('loginScreen').classList.remove('d-none');
     });
 
-    document.getElementById('messageForm').addEventListener('submit', function (e) {
-        e.preventDefault();
+    document.getElementById('logoutAdmin').addEventListener('click', function () {
+        localStorage.removeItem('loggedInUser');
+        document.getElementById('adminPanel').classList.add('d-none');
+        document.getElementById('loginScreen').classList.remove('d-none');
+    });
 
-        const messageText = document.getElementById('messageText').value;
-        const loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'));
+    // Função para carregar mensagens no painel de usuário comum
+    function loadUserMessages() {
+        const userMessages = document.getElementById('userMessages');
+        userMessages.innerHTML = '';
+        messages.forEach(msg => {
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message');
+            messageDiv.innerHTML = `${msg.sender}: ${msg.text} <button class="emoji-btn">👍</button>`;
+            userMessages.appendChild(messageDiv);
+        });
+    }
 
-        if (loggedInUser) {
-            messages.push({ text: messageText, sender: loggedInUser.username, timestamp: new Date().toISOString() });
-            localStorage.setItem('messages', JSON.stringify(messages));
-            loadAdminMessages();
-            loadUserMessages();
-            document.getElementById('messageText').value = '';
-        }
+    // Função para carregar recados no painel administrativo
+    function loadAdminMessages() {
+        const adminMessageList = document.getElementById('adminMessageList');
+        adminMessageList.innerHTML = '';
+        messages.forEach(msg => {
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message');
+            messageDiv.innerHTML = `${msg.sender}: ${msg.text} <button class="emoji-btn">👍</button> <button class="btn btn-danger btn-sm deleteMsg">Excluir</button> <button class="btn btn-warning btn-sm editMsg">Editar</button>`;
+            adminMessageList.appendChild(messageDiv);
+        });
+
+        document.querySelectorAll('.deleteMsg').forEach(btn => {
+            btn.addEventListener('click', function () {
+                const msgText = btn.parentElement.textContent.split(':')[0];
+                messages = messages.filter(msg => msg.sender !== msgText);
+                localStorage.setItem('messages', JSON.stringify(messages));
+                loadAdminMessages();
+            });
+        });
+
+        document.querySelectorAll('.editMsg').forEach(btn => {
+            btn.addEventListener('click', function () {
+                const msgText = btn.parentElement.textContent.split(':')[0];
+                const messageToEdit = messages.find(msg => msg.sender === msgText);
+                document.getElementById('newMessageText').value = messageToEdit.text;
+                document.getElementById('modalMessageForm').classList.remove('d-none');
+                document.getElementById('submitNewMessage').addEventListener('click', function () {
+                    messageToEdit.text = document.getElementById('newMessageText').value;
+                    localStorage.setItem('messages', JSON.stringify(messages));
+                    loadAdminMessages();
+                    document.getElementById('modalMessageForm').classList.add('d-none');
+                });
+            });
+        });
+    }
+
+    // Função para adicionar um novo recado
+    document.getElementById('addMessage').addEventListener('click', function () {
+        document.getElementById('modalMessageForm').classList.remove('d-none');
+        document.getElementById('submitNewMessage').addEventListener('click', function () {
+            const messageText = document.getElementById('newMessageText').value;
+            if (messageText) {
+                const newMessage = { sender: 'Admin', text: messageText };
+                messages.push(newMessage);
+                localStorage.setItem('messages', JSON.stringify(messages));
+                loadAdminMessages();
+                document.getElementById('newMessageText').value = '';
+                document.getElementById('modalMessageForm').classList.add('d-none');
+            }
+        });
+    });
+
+    // Visualizar usuários logados
+    document.getElementById('viewLoggedUsers').addEventListener('click', function () {
+        const loggedUsersList = document.getElementById('loggedUsersList');
+        loggedUsersList.innerHTML = '';
+        users.forEach(user => {
+            const userDiv = document.createElement('div');
+            userDiv.classList.add('message');
+            userDiv.innerHTML = `${user.id} - ${user.isAdmin ? 'Administrador' : 'Usuário'} <button class="btn btn-danger btn-sm logoutUserBtn">Deslogar</button>`;
+            loggedUsersList.appendChild(userDiv);
+        });
+
+        document.querySelectorAll('.logoutUserBtn').forEach(btn => {
+            btn.addEventListener('click', function () {
+                const userID = btn.parentElement.textContent.split(' - ')[0];
+                users = users.filter(user => user.id !== userID);
+                localStorage.setItem('users', JSON.stringify(users));
+                loadAdminMessages();
+                alert(`${userID} deslogado com sucesso!`);
+            });
+        });
     });
 </script>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
