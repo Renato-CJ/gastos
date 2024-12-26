@@ -53,26 +53,6 @@
             </div>
             <button type="submit" class="btn btn-primary w-100">Entrar</button>
         </form>
-        <div class="mt-3 text-center">
-            <button id="toggleRegister" class="btn btn-link">Registrar-se</button>
-        </div>
-    </div>
-
-    <!-- Tela de Cadastro -->
-    <div id="registerScreen" class="card p-4 d-none">
-        <h2 class="text-center">Registrar</h2>
-        <form id="registerForm">
-            <div class="mb-3">
-                <input type="text" id="registerID" class="form-control" placeholder="ID" required>
-            </div>
-            <div class="mb-3">
-                <input type="password" id="registerPassword" class="form-control" placeholder="Senha" required>
-            </div>
-            <button type="submit" class="btn btn-success w-100">Registrar</button>
-        </form>
-        <div class="mt-3 text-center">
-            <button id="toggleLogin" class="btn btn-link">Já tenho uma conta</button>
-        </div>
     </div>
 
     <!-- Painel Administrativo -->
@@ -87,6 +67,13 @@
             <h4 class="mt-4">Gerenciamento de Usuários</h4>
             <button id="viewLoggedUsers" class="btn btn-info w-100">Visualizar Usuários Logados</button>
             <div id="loggedUsersList"></div>
+
+            <h4 class="mt-4">Criar Novo Usuário</h4>
+            <form id="createUserForm">
+                <input type="text" id="newUserID" class="form-control mb-2" placeholder="ID do Novo Usuário" required>
+                <input type="password" id="newUserPassword" class="form-control mb-2" placeholder="Senha" required>
+                <button type="submit" class="btn btn-primary w-100">Criar Usuário</button>
+            </form>
         </div>
         <div id="modalMessageForm" class="d-none">
             <textarea id="newMessageText" class="form-control" rows="3" placeholder="Escreva o recado"></textarea>
@@ -124,27 +111,18 @@
 </div>
 
 <script>
+    // Carrega os usuários e mensagens do localStorage
     let users = JSON.parse(localStorage.getItem('users')) || [];
     let messages = JSON.parse(localStorage.getItem('messages')) || [];
     const defaultAdmin = { id: 'admin', password: 'admin123', isAdmin: true };
-    
+
+    // Se o admin não existir, cria o administrador no localStorage
     if (!users.some(user => user.id === defaultAdmin.id)) {
         users.push(defaultAdmin);
         localStorage.setItem('users', JSON.stringify(users));
     }
 
-    // Função para alternar entre telas de login e cadastro
-    document.getElementById('toggleRegister').addEventListener('click', function () {
-        document.getElementById('loginScreen').classList.add('d-none');
-        document.getElementById('registerScreen').classList.remove('d-none');
-    });
-
-    document.getElementById('toggleLogin').addEventListener('click', function () {
-        document.getElementById('registerScreen').classList.add('d-none');
-        document.getElementById('loginScreen').classList.remove('d-none');
-    });
-
-    // Login
+    // Login do usuário
     document.getElementById('loginForm').addEventListener('submit', function (e) {
         e.preventDefault();
         const id = document.getElementById('loginID').value;
@@ -168,28 +146,14 @@
         }
     });
 
-    // Cadastro
-    document.getElementById('registerForm').addEventListener('submit', function (e) {
-        e.preventDefault();
-        const id = document.getElementById('registerID').value;
-        const password = document.getElementById('registerPassword').value;
-
-        if (id && password) {
-            users.push({ id, password, isAdmin: false });
-            localStorage.setItem('users', JSON.stringify(users));
-            alert('Cadastro realizado com sucesso!');
-            document.getElementById('registerScreen').classList.add('d-none');
-            document.getElementById('loginScreen').classList.remove('d-none');
-        }
-    });
-
-    // Logout
+    // Logout do usuário comum
     document.getElementById('logoutUser').addEventListener('click', function () {
         localStorage.removeItem('loggedInUser');
         document.getElementById('userPanel').classList.add('d-none');
         document.getElementById('loginScreen').classList.remove('d-none');
     });
 
+    // Logout do administrador
     document.getElementById('logoutAdmin').addEventListener('click', function () {
         localStorage.removeItem('loggedInUser');
         document.getElementById('adminPanel').classList.add('d-none');
@@ -267,19 +231,28 @@
         users.forEach(user => {
             const userDiv = document.createElement('div');
             userDiv.classList.add('message');
-            userDiv.innerHTML = `${user.id} - ${user.isAdmin ? 'Administrador' : 'Usuário'} <button class="btn btn-danger btn-sm logoutUserBtn">Deslogar</button>`;
+            userDiv.innerHTML = `${user.id} - ${user.isAdmin ? 'Administrador' : 'Usuário'}`;
             loggedUsersList.appendChild(userDiv);
         });
+    });
 
-        document.querySelectorAll('.logoutUserBtn').forEach(btn => {
-            btn.addEventListener('click', function () {
-                const userID = btn.parentElement.textContent.split(' - ')[0];
-                users = users.filter(user => user.id !== userID);
-                localStorage.setItem('users', JSON.stringify(users));
-                loadAdminMessages();
-                alert(`${userID} deslogado com sucesso!`);
-            });
-        });
+    // Criar um novo usuário
+    document.getElementById('createUserForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+        const newUserID = document.getElementById('newUserID').value;
+        const newUserPassword = document.getElementById('newUserPassword').value;
+
+        // Verifica se o usuário já existe
+        if (users.some(user => user.id === newUserID)) {
+            alert('Usuário já existe!');
+        } else {
+            const newUser = { id: newUserID, password: newUserPassword, isAdmin: false };
+            users.push(newUser);
+            localStorage.setItem('users', JSON.stringify(users));
+            alert('Usuário criado com sucesso!');
+            document.getElementById('newUserID').value = '';
+            document.getElementById('newUserPassword').value = '';
+        }
     });
 </script>
 
