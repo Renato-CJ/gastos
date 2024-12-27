@@ -1,0 +1,122 @@
+/* Estilos globais */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    background-color: #007BFF;
+    color: white;
+    text-align: center;
+    padding: 20px;
+}
+
+h1 {
+    margin: 0;
+}
+
+nav {
+    margin-top: 20px;
+}
+
+nav a, nav button {
+    color: white;
+    text-decoration: none;
+    font-size: 16px;
+    margin: 0 15px;
+    cursor: pointer;
+}
+
+button {
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+#dashboard {
+    margin: 30px;
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+#recados-enviados h2,
+#enviar-recado h3 {
+    color: #007BFF;
+}
+
+#lista-recados-admin {
+    max-height: 400px;
+    overflow-y: auto;
+    margin-bottom: 20px;
+}
+
+textarea {
+    width: 100%;
+    height: 100px;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    margin-bottom: 10px;
+}
+
+#emoji-selector-admin {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 10px;
+}
+
+#emoji-selector-admin button {
+    font-size: 20px;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+#emoji-selector-admin button:hover {
+    background-color: #f1f1f1;
+}
+
+input[type="file"] {
+    margin-top: 10px;
+}
+
+form button {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: #28a745;
+}
+
+form button:hover {
+    background-color: #218838;
+}
+
+#lista-recados-admin .recado {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+#lista-recados-admin .recado button {
+    background-color: #dc3545;
+    border: none;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#lista-recados-admin .recado button:hover {
+    background-color: #c82333;
+}

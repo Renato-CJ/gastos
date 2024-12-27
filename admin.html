@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Recados da Qualidade</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header>
+        <h1>Área Administrativa - Recados da Qualidade</h1>
+        <nav>
+            <a href="index.html">Página Inicial</a>
+            <button id="logout">Logout</button>
+        </nav>
+    </header>
+
+    <div id="dashboard">
+        <section id="recados-enviados">
+            <h2>Lista de Recados Enviados</h2>
+            <div id="lista-recados-admin">
+                <!-- Recados enviados serão exibidos aqui -->
+            </div>
+        </section>
+
+        <section id="enviar-recado">
+            <h3>Enviar Novo Recado</h3>
+            <form id="envio-recado-admin">
+                <textarea id="texto-recado-admin" placeholder="Digite seu recado aqui..." required></textarea>
+
+                <div id="emoji-selector-admin">
+                    <button class="emoji" data-emoji="😊">😊</button>
+                    <button class="emoji" data-emoji="❤️">❤️</button>
+                    <button class="emoji" data-emoji="😂">😂</button>
+                    <button class="emoji" data-emoji="😎">😎</button>
+                </div>
+
+                <input type="file" id="imagem-gif" accept="image/*,video/*">
+                <button type="submit">Enviar Recado</button>
+            </form>
+        </section>
+    </div>
+
+    <script src="js/script.js"></script>
+</body>
+</html>
