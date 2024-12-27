@@ -3,8 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Plataforma de Recados</title>
+    <title>Plataforma de Recados - Admin</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <style>
+        /* Estilos básicos */
         body {
             font-family: Arial, sans-serif;
             margin: 0;
@@ -15,19 +17,97 @@
             align-items: center;
             justify-content: center;
             height: 100vh;
-            overflow: hidden;
         }
 
-        #adminMenuIcon {
+        /* Modal de login e cadastro */
+        #userModal {
+            display: flex;
             position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 10px;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            width: 350px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        h3 {
+            margin-bottom: 20px;
+            font-size: 24px;
+            text-align: center;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            font-size: 16px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #adminPanel {
+            display: none;
+            width: 100%;
+            max-width: 800px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        .admin-button {
+            margin: 10px 0;
+            display: block;
+            padding: 12px;
             background-color: #28a745;
             color: white;
-            border-radius: 50%;
-            font-size: 20px;
+            text-align: center;
+            border-radius: 4px;
             cursor: pointer;
+        }
+
+        .admin-button:hover {
+            background-color: #218838;
+        }
+
+        .menu-icons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .menu-icons div {
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .menu-icons i {
+            font-size: 50px;
+            color: #007BFF;
         }
 
         #message-container {
@@ -39,7 +119,6 @@
             box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
             overflow-y: auto;
             padding: 20px;
-            box-sizing: border-box;
         }
 
         .message {
@@ -48,24 +127,14 @@
             padding: 15px;
             margin-bottom: 20px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
-        }
-
-        .message:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
         }
 
         .message-header {
             font-weight: bold;
-            font-size: 16px;
-            color: #333;
         }
 
         .message-body {
             margin-top: 10px;
-            font-size: 14px;
-            color: #555;
         }
 
         .message-date {
@@ -73,391 +142,137 @@
             color: #888;
             margin-top: 10px;
         }
-
-        .emoji-btn {
-            padding: 5px;
-            cursor: pointer;
-            background-color: transparent;
-            border: none;
-            font-size: 20px;
-            margin-left: 10px;
-            transition: all 0.2s ease;
-        }
-
-        .emoji-btn:hover {
-            transform: scale(1.2);
-        }
-
-        #loginModal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            justify-content: center;
-            align-items: center;
-            z-index: 200;
-        }
-
-        .modal-content {
-            background-color: #fff;
-            padding: 30px;
-            border-radius: 8px;
-            width: 350px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-            transform: scale(0.9);
-            transition: transform 0.3s ease;
-        }
-
-        .modal-content.show {
-            transform: scale(1);
-        }
-
-        h3 {
-            margin-bottom: 20px;
-            font-size: 24px;
-            text-align: center;
-            color: #333;
-        }
-
-        input {
-            width: 100%;
-            padding: 12px;
-            margin: 10px 0;
-            border-radius: 4px;
-            border: 1px solid #ddd;
-            font-size: 16px;
-            transition: border-color 0.3s ease;
-        }
-
-        input:focus {
-            border-color: #007BFF;
-            outline: none;
-        }
-
-        .admin-button {
-            width: 100%;
-            padding: 12px;
-            background-color: #007BFF;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: background-color 0.3s ease;
-            margin-top: 10px;
-        }
-
-        .admin-button:hover {
-            background-color: #0056b3;
-        }
-
-        #adminPanel {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            justify-content: center;
-            align-items: center;
-            z-index: 100;
-            backdrop-filter: blur(8px);
-        }
-
-        .admin-functions {
-            background-color: #fff;
-            padding: 30px;
-            border-radius: 8px;
-            width: 400px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-        }
-
-        .admin-functions button {
-            width: 100%;
-            padding: 12px;
-            background-color: #007BFF;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-            margin-bottom: 10px;
-        }
-
-        .admin-functions button:hover {
-            background-color: #0056b3;
-        }
-
-        .admin-functions input[type="file"] {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-
-        .message-delete-btn {
-            background-color: red;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            padding: 10px;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-
-        .message-delete-btn:hover {
-            background-color: darkred;
-        }
-
-        /* Novo modal de envio/edição */
-        .form-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            justify-content: center;
-            align-items: center;
-            z-index: 300;
-            backdrop-filter: blur(8px);
-        }
-
-        .form-modal .modal-content {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            width: 400px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-            transform: scale(0.9);
-            transition: transform 0.3s ease;
-        }
-
-        .form-modal .modal-content.show {
-            transform: scale(1);
-        }
-
-        .form-modal h3 {
-            text-align: center;
-            color: #333;
-        }
-
-        .form-modal input[type="text"], .form-modal textarea {
-            width: 100%;
-            padding: 12px;
-            margin: 10px 0;
-            border-radius: 4px;
-            border: 1px solid #ddd;
-            font-size: 16px;
-            transition: border-color 0.3s ease;
-        }
-
-        .form-modal input[type="text"]:focus, .form-modal textarea:focus {
-            border-color: #007BFF;
-            outline: none;
-        }
-
-        .form-modal button {
-            width: 100%;
-            padding: 12px;
-            background-color: #007BFF;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-
-        .form-modal button:hover {
-            background-color: #0056b3;
-        }
     </style>
 </head>
 <body>
 
-    <div id="adminMenuIcon" onclick="showLoginModal()">⚙️</div>
+    <!-- Modal de Login -->
+    <div id="userModal">
+        <div class="modal-content" id="loginModal">
+            <h3>Login</h3>
+            <input type="text" id="usernameLogin" placeholder="ID de Usuário" />
+            <input type="password" id="passwordLogin" placeholder="Senha" />
+            <button onclick="loginUser()">Entrar</button>
+            <button onclick="showRegistrationModal()">Cadastrar</button>
+        </div>
 
+        <div class="modal-content" id="registrationModal" style="display: none;">
+            <h3>Cadastro de Usuário</h3>
+            <input type="text" id="usernameRegister" placeholder="ID de Usuário" />
+            <input type="password" id="passwordRegister" placeholder="Senha" />
+            <button onclick="registerUser()">Cadastrar</button>
+        </div>
+    </div>
+
+    <!-- Painel de administração -->
+    <div id="adminPanel">
+        <h3>Painel de Administração</h3>
+        <div class="menu-icons">
+            <div onclick="showSendMessage()">
+                <i class="fas fa-comment"></i>
+                <p>Enviar Recados</p>
+            </div>
+            <div onclick="showDeleteMessage()">
+                <i class="fas fa-trash"></i>
+                <p>Apagar Recados</p>
+            </div>
+            <div onclick="showDeleteUser()">
+                <i class="fas fa-user-times"></i>
+                <p>Apagar Usuários</p>
+            </div>
+            <div onclick="showCheckUserStatus()">
+                <i class="fas fa-user-check"></i>
+                <p>Status dos Usuários</p>
+            </div>
+            <div onclick="showSendImageGif()">
+                <i class="fas fa-image"></i>
+                <p>Enviar Imagens/GIFs</p>
+            </div>
+        </div>
+        <button class="admin-button" onclick="logout()">Logout</button>
+    </div>
+
+    <!-- Área de mensagens -->
     <div id="message-container"></div>
 
-    <div id="loginModal">
-        <div class="modal-content">
-            <h3>Login Administrativo</h3>
-            <input type="text" id="adminId" placeholder="ID de Admin" />
-            <input type="password" id="adminPassword" placeholder="Senha de Admin" />
-            <button class="admin-button" onclick="loginAdmin()">Entrar</button>
-            <button class="admin-button" onclick="closeLoginModal()">Fechar</button>
-        </div>
-    </div>
-
-    <div id="adminPanel">
-        <div class="admin-functions">
-            <h3>Painel Administrativo</h3>
-            <button onclick="showSendMessageModal()">Enviar Recado</button>
-            <button onclick="showMessagesForDeletion()">Excluir Recado</button>
-            <input type="file" id="imageUpload" accept="image/*,video/*" />
-            <button onclick="goBack()">Voltar</button>
-            <button onclick="logOut()">Deslogar</button>
-        </div>
-    </div>
-
-    <div id="deleteMessagesPanel" style="display: none;">
-        <div class="admin-functions">
-            <h3>Escolha um Recado para Excluir</h3>
-            <div id="deleteMessageList"></div>
-            <button onclick="backToAdminPanel()">Voltar</button>
-        </div>
-    </div>
-
-    <!-- Modal para Enviar Recado -->
-    <div id="sendMessageModal" class="form-modal">
-        <div class="modal-content">
-            <h3>Enviar Recado</h3>
-            <textarea id="newMessageText" placeholder="Digite seu recado..." rows="4"></textarea>
-            <input type="file" id="messageImageUpload" accept="image/*,video/*" />
-            <button onclick="sendNewMessage()">Enviar</button>
-            <button onclick="closeSendMessageModal()">Cancelar</button>
-        </div>
-    </div>
-
     <script>
-        // Funções para mostrar e fechar os modais
-        function showSendMessageModal() {
-            document.getElementById('sendMessageModal').style.display = 'flex';
-            setTimeout(function () {
-                document.querySelector('#sendMessageModal .modal-content').classList.add('show');
-            }, 50);
+        // Funções de Login e Cadastro
+        function showLoginModal() {
+            document.getElementById('userModal').style.display = 'flex';
+            document.getElementById('loginModal').style.display = 'block';
+            document.getElementById('registrationModal').style.display = 'none';
         }
 
-        function closeSendMessageModal() {
-            document.querySelector('#sendMessageModal .modal-content').classList.remove('show');
-            setTimeout(function () {
-                document.getElementById('sendMessageModal').style.display = 'none';
-            }, 300);
+        function showRegistrationModal() {
+            document.getElementById('loginModal').style.display = 'none';
+            document.getElementById('registrationModal').style.display = 'block';
         }
 
-        function sendNewMessage() {
-            const newMessage = document.getElementById('newMessageText').value;
-            const imageUrl = document.getElementById('messageImageUpload').files.length ? URL.createObjectURL(document.getElementById('messageImageUpload').files[0]) : '';
-            if (newMessage) {
-                const messages = getData('messages');
-                messages.push({ sender: 'Admin', text: newMessage, timestamp: Date.now(), imageUrl: imageUrl });
-                setData('messages', messages);
-                loadAdminMessages();
-            }
-            closeSendMessageModal();
+        function loginUser() {
+            const username = document.getElementById('usernameLogin').value;
+            const password = document.getElementById('passwordLogin').value;
+
+            // Simulação de login (substituir pelo código de autenticação)
+            alert("Login efetuado com sucesso!");
+            document.getElementById('userModal').style.display = 'none';
+            showAdminPanel();
         }
 
-        // Funções de administração
-        function showMessagesForDeletion() {
-            const messages = getData('messages');
-            const deleteMessageList = document.getElementById('deleteMessageList');
-            deleteMessageList.innerHTML = '';
-            messages.forEach((msg, index) => {
-                const deleteButton = document.createElement('button');
-                deleteButton.classList.add('message-delete-btn');
-                deleteButton.textContent = `Excluir Recado ${index + 1}: ${msg.text.substring(0, 30)}...`;
-                deleteButton.onclick = function() { deleteMessage(index); };
-                deleteMessageList.appendChild(deleteButton);
-            });
-            document.getElementById('adminPanel').style.display = 'none';
-            document.getElementById('deleteMessagesPanel').style.display = 'block';
+        function registerUser() {
+            const username = document.getElementById('usernameRegister').value;
+            const password = document.getElementById('passwordRegister').value;
+
+            // Simulação de cadastro (substituir pelo código de registro)
+            alert("Usuário registrado com sucesso!");
+            document.getElementById('userModal').style.display = 'none';
         }
 
-        function deleteMessage(index) {
-            const messages = getData('messages');
-            messages.splice(index, 1); // Remove o recado baseado no índice
-            setData('messages', messages);
-            loadAdminMessages();
-            backToAdminPanel();
-        }
-
-        function backToAdminPanel() {
-            document.getElementById('deleteMessagesPanel').style.display = 'none';
+        // Mostrar painel do admin
+        function showAdminPanel() {
             document.getElementById('adminPanel').style.display = 'block';
         }
 
-        function loadAdminMessages() {
-            const messages = getData('messages');
-            const messageContainer = document.getElementById('message-container');
-            messageContainer.innerHTML = '';
-            messages.forEach((msg, index) => {
-                const messageDiv = document.createElement('div');
-                messageDiv.classList.add('message');
-                const date = new Date(msg.timestamp);
-                messageDiv.innerHTML = `
-                    <div class="message-header">${msg.sender}</div>
-                    <div class="message-body">${msg.text}</div>
-                    ${msg.imageUrl ? `<img src="${msg.imageUrl}" alt="Imagem" style="max-width: 100%; border-radius: 8px; margin-top: 10px;" />` : ''}
-                    <div class="message-date">${date.toLocaleString()}</div>
+        // Funções para mostrar e ocultar os menus de administração
+        function showSendMessage() {
+            const message = prompt("Digite o recado que deseja enviar:");
+            if (message) {
+                const messageContainer = document.getElementById('message-container');
+                const newMessage = document.createElement('div');
+                newMessage.classList.add('message');
+                newMessage.innerHTML = `
+                    <div class="message-header">Recado Enviado</div>
+                    <div class="message-body">${message}</div>
+                    <div class="message-date">${new Date().toLocaleString()}</div>
                 `;
-                messageContainer.appendChild(messageDiv);
-            });
-        }
-
-        // Funções de login e logout
-        function showLoginModal() {
-            const loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'));
-            if (!loggedInUser) {
-                document.getElementById('loginModal').style.display = 'flex';
-                setTimeout(function () {
-                    document.querySelector('#loginModal .modal-content').classList.add('show');
-                }, 50);
-            } else {
-                showAdminPanel();
+                messageContainer.appendChild(newMessage);
             }
         }
 
-        function closeLoginModal() {
-            document.querySelector('#loginModal .modal-content').classList.remove('show');
-            setTimeout(function () {
-                document.getElementById('loginModal').style.display = 'none';
-            }, 300);
+        function showDeleteMessage() {
+            alert("Aqui o administrador poderá apagar recados enviados.");
         }
 
-        function loginAdmin() {
-            const adminId = document.getElementById('adminId').value;
-            const adminPassword = document.getElementById('adminPassword').value;
-            if (adminId === 'admin' && adminPassword === 'admin123') {
-                localStorage.setItem('loggedInUser', JSON.stringify({ id: adminId }));
-                closeLoginModal();
-                showAdminPanel();
-            } else {
-                alert('Credenciais inválidas');
-            }
+        function showDeleteUser() {
+            alert("Aqui o administrador poderá apagar usuários registrados.");
         }
 
-        function showAdminPanel() {
-            document.getElementById('adminPanel').style.display = 'flex';
+        function showCheckUserStatus() {
+            alert("Aqui o administrador poderá verificar o status dos usuários.");
         }
 
-        function logOut() {
-            localStorage.removeItem('loggedInUser');
-            window.location.reload();
+        function showSendImageGif() {
+            alert("Aqui o administrador poderá enviar imagens ou GIFs.");
         }
 
-        // Função de voltar
-        function goBack() {
-            window.history.back();
+        function logout() {
+            document.getElementById('adminPanel').style.display = 'none';
+            showLoginModal();
         }
 
-        // Funções de armazenamento
-        function getData(key) {
-            return JSON.parse(localStorage.getItem(key)) || [];
-        }
-
-        function setData(key, data) {
-            localStorage.setItem(key, JSON.stringify(data));
-        }
-
-        // Inicializa as mensagens na tela
-        loadAdminMessages();
+        // Exibe o modal de login ao carregar a página
+        window.onload = function() {
+            showLoginModal();
+        };
     </script>
-
 </body>
 </html>
