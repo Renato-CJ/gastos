@@ -232,6 +232,27 @@
             document.getElementById('adminPanel').style.display = 'block';
         }
 
+        const { Client } = require('pg');
+
+// Crie uma nova instância do cliente PostgreSQL com as credenciais
+const client = new Client({
+  host: 'ghostly-effectual-hammerhead.data-1.use1.tembo.io',      // Endereço do banco
+  port: 5432,                  // Porta padrão do PostgreSQL
+  user: 'admin',               // Usuário do banco
+  password: 'senha_do_banco',  // Senha do banco
+  database: 'site_database'    // Nome do banco de dados
+});
+
+// Conecte-se ao banco de dados
+client.connect((err) => {
+  if (err) {
+    console.error('Erro ao conectar ao banco de dados', err.stack);
+  } else {
+    console.log('Conectado ao banco de dados PostgreSQL!');
+  }
+});
+
+
         // Funções para mostrar e ocultar os menus de administração
         function showSendMessage() {
             const message = prompt("Digite o recado que deseja enviar:");
