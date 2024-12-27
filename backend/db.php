@@ -1,5 +1,5 @@
 <?php
-$host = "localhost"; // ou seu host
+$host = "ghostly-effectual-hammerhead.data-1.use1.tembo.io"; // ou seu host
 $db = "recados_qualidade";
 $user = "root"; // ou seu usuário MySQL
 $password = ""; // ou sua senha MySQL
